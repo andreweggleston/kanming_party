@@ -1,0 +1,22 @@
+<personas>
+    <persona>
+        <name>Super Groovy Dank Dubstepper </name>
+        <description>You’re at a party, and you need to keep everyone happy with your epic beats, but you have to manage a certain amount of songs, and the songs cost money. </description>
+    </persona>
+    <persona>
+        <name>Super Cool Guy  </name>
+        <description>You’re a super cool guy, and you have to make everyone else like you, otherwise you’ll probably get shot.  </description>
+    </persona>
+    <persona>
+        <name>Super Smart Guy  </name>
+        <description>You take a series of test, and if you get lower than a 99 on any of them, everyone gets on your case . </description>
+    </persona>
+    <persona>
+        <name>Super Good Looking Guy  </name>
+        <description>You are super good looking, and there are a lot of girls hitting on you. You have to resist the urge though, because you have a Girlfriend .</description>
+    </persona>
+    <persona>
+        <name>Super Nice Guy  </name>
+        <description>There are a bunch of people who are really mean to you, and you get really sad, but you have to manage your niceness with sadness. If you get too mean to relieve the sadness, you lose, but if you’re too sad, you also lose. </description>
+    </persona>
+</personas>
