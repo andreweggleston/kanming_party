@@ -337,7 +337,9 @@ public class Panel extends JPanel {
                 out.write(buf, 0, bytesRead);
             }
         } finally {
+            assert in != null;
             in.close();
+            assert out != null;
             out.close();
         }
     }
