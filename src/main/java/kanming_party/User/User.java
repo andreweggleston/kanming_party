@@ -20,6 +20,8 @@ public class User extends Drawable{
 
     private int currentGoal, goalType, goalStage;
 
+    private int stars, wins;
+
 
     public User(String name, int id, String spriteSelection){
         this.name = name;
@@ -50,6 +52,26 @@ public class User extends Drawable{
 
     public File getAvatarProfileImage(){
         return avatar.getAvatarProfileImage();
+    }
+
+    public int getId(){
+        return id;
+    }
+
+    public int getStars(){
+        return stars;
+    }
+
+    public int getWins(){
+        return wins;
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public int getGoalType(){
+        return goalType;
     }
 
 }
