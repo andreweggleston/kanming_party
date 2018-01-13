@@ -20,6 +20,8 @@ public class User extends Drawable{
 
     private int stars, wins;
 
+    private int boardLocationX, boardLocationY;
+
 
     public User(String name, int id, String spriteSelection){
         this.name = name;

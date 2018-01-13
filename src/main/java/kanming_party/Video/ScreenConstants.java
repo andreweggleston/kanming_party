@@ -10,4 +10,8 @@ interface ScreenConstants {
     int GAME = 3;
 
     int TEST = 4;
+
+    int BOARDCREATOR = 5;
+
+
 }
