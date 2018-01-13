@@ -6,9 +6,7 @@ import kanming_party.Game.GameConstants;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 
 public class Panel extends JPanel {
@@ -23,11 +21,14 @@ public class Panel extends JPanel {
     private Button testPopupButton;
     private Button boardCreatorButton;
 
+    private Button boardClearButton;
+
     private int currentSelectedTileType;
 
     private BoardBox[][] boardCreatorBoxes = new BoardBox[10][10];
 
     private ObjectOutputStream oos;
+    private ObjectInputStream ois;
 
     private Popup goalPopup;
 
@@ -57,12 +58,6 @@ public class Panel extends JPanel {
                 mouseY = e.getY();
             }
         });
-
-        try {
-            oos = new ObjectOutputStream(new FileOutputStream("src/main/resources/gameBoard.data"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         addKeyListener(new KeyListener() {
             @Override
@@ -94,10 +89,23 @@ public class Panel extends JPanel {
 
                     case 'p':
                         try {
+                            oos = new ObjectOutputStream(new FileOutputStream("src/main/resources/gameBoardTemp.data"));
                             oos.writeObject(boardCreatorBoxes);
+                            copyFile(new File("src/main/resources/gameBoardTemp.data"), new File("src/main/resources/gameBoard.data"));
+                            oos.close();
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
+                        break;
+                    case 'o':
+                        try {
+                            ois = new ObjectInputStream(new FileInputStream("src/main/resources/gameBoard.data"));
+                            boardCreatorBoxes = (BoardBox[][]) ois.readObject();
+                            ois.close();
+                        } catch (IOException | ClassNotFoundException e1) {
+                            e1.printStackTrace();
+                        }
+                        break;
                 }
             }
 
@@ -123,6 +131,9 @@ public class Panel extends JPanel {
                         screen = ScreenConstants.HOST;
                     }
                     if (testPopupButton.checkCollision(mouseX, mouseY)) {
+                        if (goalPopup.isHidden()) {
+                            goalPopup.toggleHide();
+                        }
                         screen = ScreenConstants.TEST;
                     }
                     if (boardCreatorButton.checkCollision(mouseX, mouseY)) {
@@ -133,7 +144,18 @@ public class Panel extends JPanel {
                         screen = ScreenConstants.MAIN_MENU;
                     }
 
+                    if (screen == ScreenConstants.TEST) {
+                        if (goalPopup.checkCollisionOption1(mouseX, mouseY)) {
+                            goalPopup.toggleHide();
+                        } else if (goalPopup.checkCollisionOption2(mouseX, mouseY)) {
+                            goalPopup.toggleHide();
+                        }
+                    }
+
                     if (screen == ScreenConstants.BOARDCREATOR) {
+                        if (boardClearButton.checkCollision(mouseX, mouseY)) {
+                            initializeCreatorBoxes();
+                        }
                         for (int x = 0; x < boardCreatorBoxes.length; x++) {
                             for (int y = 0; y < boardCreatorBoxes[0].length; y++) {
                                 if (boardCreatorBoxes[x][y].checkCollision(mouseX, mouseY)) {
@@ -177,7 +199,7 @@ public class Panel extends JPanel {
             buttonsInitialized = initializeButtons();
         }
 
-        if (!boardCreatorBoxesInitialized && (getWidth() != 1 && getHeight() != 1)){
+        if (!boardCreatorBoxesInitialized && (getWidth() != 1 && getHeight() != 1)) {
             boardCreatorBoxesInitialized = initializeCreatorBoxes();
         }
 
@@ -207,32 +229,32 @@ public class Panel extends JPanel {
                     goalPopup.checkCollision(mouseX, mouseY);
                     goalPopup.draw(g2);
                 } else if (screen == ScreenConstants.BOARDCREATOR) {
-                    g2.drawString("F: Empty  tile", getWidth()/20, getHeight()/20*19);
-                    g2.clearRect(getWidth()/40*7, getHeight()/20*19-15, 15, 15);
+                    g2.drawString("F: Empty  tile", getWidth() / 20, getHeight() / 20 * 19);
+                    g2.clearRect(getWidth() / 40 * 7, getHeight() / 20 * 19 - 15, 15, 15);
 
-                    g2.drawString("D: Drop  tile", getWidth()/20, getHeight()/20*18);
+                    g2.drawString("D: Drop  tile", getWidth() / 20, getHeight() / 20 * 18);
                     g2.setColor(Color.BLUE);
-                    g2.fillRect(getWidth()/40*7, getHeight()/20*18-15, 15, 15);
+                    g2.fillRect(getWidth() / 40 * 7, getHeight() / 20 * 18 - 15, 15, 15);
                     g2.setColor(Color.BLACK);
 
-                    g2.drawString("S: Star  tile", getWidth()/20, getHeight()/20*17);
+                    g2.drawString("S: Star  tile", getWidth() / 20, getHeight() / 20 * 17);
                     g2.setColor(Color.YELLOW);
-                    g2.fillRect(getWidth()/40*7, getHeight()/20*17-15, 15, 15);
+                    g2.fillRect(getWidth() / 40 * 7, getHeight() / 20 * 17 - 15, 15, 15);
                     g2.setColor(Color.BLACK);
 
-                    g2.drawString("B: Battle  tile", getWidth()/20, getHeight()/20*16);
+                    g2.drawString("B: Battle  tile", getWidth() / 20, getHeight() / 20 * 16);
                     g2.setColor(Color.RED);
-                    g2.fillRect(getWidth()/40*7, getHeight()/20*16-15, 15, 15);
+                    g2.fillRect(getWidth() / 40 * 7, getHeight() / 20 * 16 - 15, 15, 15);
                     g2.setColor(Color.BLACK);
 
-                    g2.drawString("M: Minigame  tile", getWidth()/20, getHeight()/20*15);
+                    g2.drawString("M: Minigame  tile", getWidth() / 20, getHeight() / 20 * 15);
                     g2.setColor(Color.ORANGE);
-                    g2.fillRect(getWidth()/40*7, getHeight()/20*15-15, 15, 15);
+                    g2.fillRect(getWidth() / 40 * 7, getHeight() / 20 * 15 - 15, 15, 15);
                     g2.setColor(Color.BLACK);
 
-                    g2.drawString("H: Home  tile", getWidth()/20, getHeight()/20*14);
+                    g2.drawString("H: Home  tile", getWidth() / 20, getHeight() / 20 * 14);
                     g2.setColor(Color.PINK);
-                    g2.fillRect(getWidth()/40*7, getHeight()/20*14-15, 15, 15);
+                    g2.fillRect(getWidth() / 40 * 7, getHeight() / 20 * 14 - 15, 15, 15);
                     g2.setColor(Color.BLACK);
 
                     for (int x = 0; x < boardCreatorBoxes.length; x++) {
@@ -240,6 +262,9 @@ public class Panel extends JPanel {
                             boardCreatorBoxes[x][y].draw(g2);
                         }
                     }
+
+                    boardClearButton.checkCollision(mouseX, mouseY);
+                    boardClearButton.draw(g2);
                 }
             }
 
@@ -281,6 +306,7 @@ public class Panel extends JPanel {
         loadList.add(true);
         boardCreatorButton = new Button("Create a\nboard", getWidth() / 10 * 9 - 30, getHeight() / 20 - 20, 160, 40, 2);
         loadList.add(true);
+        boardClearButton = new Button("Clear", getWidth() / 20 - 30, getHeight() / 20 + 40, 100, 40, 2);
         goalPopup = new Popup("Pick your goal:", "Stars", "Wins", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3);
         loadList.add(true);
         return true;
@@ -296,5 +322,23 @@ public class Panel extends JPanel {
             }
         }
         return true;
+    }
+
+
+    private static void copyFile(File source, File dest) throws IOException {
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            in = new FileInputStream(source);
+            out = new FileOutputStream(dest);
+            byte[] buf = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = in.read(buf)) > 0) {
+                out.write(buf, 0, bytesRead);
+            }
+        } finally {
+            in.close();
+            out.close();
+        }
     }
 }
