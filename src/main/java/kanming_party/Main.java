@@ -6,9 +6,6 @@ import kanming_party.Video.Panel;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Created by student on 1/8/18.
- */
 public class Main {
 
     public static void main(String[] args) {
@@ -24,8 +21,7 @@ public class Main {
         p.grabFocus();
 
 
-
-
+//        frame.setBounds(0, 0, 800, 800);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setUndecorated(true);
         frame.setVisible(true);

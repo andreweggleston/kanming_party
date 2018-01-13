@@ -5,9 +5,7 @@ import kanming_party.Video.Drawable;
 import java.awt.*;
 import java.io.File;
 import kanming_party.Game.GameConstants;
-/**
- * Created by student on 1/9/18.
- */
+
 public class User extends Drawable{
 
     private String name;
@@ -72,6 +70,18 @@ public class User extends Drawable{
 
     public int getGoalType(){
         return goalType;
+    }
+
+    public void setId(int id){
+        this.id = id;
+    }
+
+    public int addStars(int stars){
+        return this.stars += stars;
+    }
+
+    public int addWins(int wins){
+        return this.wins += wins;
     }
 
 }
