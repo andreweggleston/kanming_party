@@ -20,6 +20,7 @@ public class Panel extends JPanel {
     private Button backButton;
     private Button testPopupButton;
     private Button boardCreatorButton;
+    private Button quitButton;
 
     private Button boardClearButton;
 
@@ -130,6 +131,9 @@ public class Panel extends JPanel {
                     if (hostButton.checkCollision(mouseX, mouseY)) {
                         screen = ScreenConstants.HOST;
                     }
+                    if (quitButton.checkCollision(mouseX, mouseY)){
+                        System.exit(0);
+                    }
                     if (testPopupButton.checkCollision(mouseX, mouseY)) {
                         if (goalPopup.isHidden()) {
                             goalPopup.toggleHide();
@@ -156,10 +160,10 @@ public class Panel extends JPanel {
                         if (boardClearButton.checkCollision(mouseX, mouseY)) {
                             initializeCreatorBoxes();
                         }
-                        for (int x = 0; x < boardCreatorBoxes.length; x++) {
-                            for (int y = 0; y < boardCreatorBoxes[0].length; y++) {
-                                if (boardCreatorBoxes[x][y].checkCollision(mouseX, mouseY)) {
-                                    boardCreatorBoxes[x][y].setType(currentSelectedTileType);
+                        for (BoardBox[] boardCreatorBoxX : boardCreatorBoxes) {
+                            for (BoardBox BoardCreatorBoxY : boardCreatorBoxX) {
+                                if (BoardCreatorBoxY.checkCollision(mouseX, mouseY)) {
+                                    BoardCreatorBoxY.setType(currentSelectedTileType);
                                 }
                             }
                         }
@@ -191,7 +195,7 @@ public class Panel extends JPanel {
 
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-
+        g2.clearRect(0,0, getWidth(), getHeight());
 
 //        drawAvailableFonts(g2);
 
@@ -207,13 +211,15 @@ public class Panel extends JPanel {
 
         if (isLoaded()) {
 
-
             if (screen == ScreenConstants.MAIN_MENU) {
                 joinButton.checkCollision(mouseX, mouseY);
                 joinButton.draw(g2);
 
                 hostButton.checkCollision(mouseX, mouseY);
                 hostButton.draw(g2);
+
+                quitButton.checkCollision(mouseX, mouseY);
+                quitButton.draw(g2);
 
                 testPopupButton.checkCollision(mouseX, mouseY);
                 testPopupButton.draw(g2);
@@ -277,7 +283,7 @@ public class Panel extends JPanel {
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 
         for (int i = 0; i < fonts.length; i++) {
-            System.out.println(fonts[i]);
+//            System.out.println(fonts[i]);
 
             g2.setFont(new Font(fonts[i], Font.PLAIN, 10));
             g2.drawString(fonts[i], 12, (12) * i + 10);
@@ -300,11 +306,13 @@ public class Panel extends JPanel {
         loadList.add(true);
         hostButton = new Button("Host Game", getWidth() / 2 - 125, getHeight() / 2 + 25, 250, 100, 4);
         loadList.add(true);
-        backButton = new Button("Back", getWidth() / 20 - 30, getHeight() / 20 - 20, 100, 40, 2);
-        loadList.add(true);
         testPopupButton = new Button("Test Popup", getWidth() / 2 - 125, getHeight() / 2 + 175, 250, 100, 4);
         loadList.add(true);
-        boardCreatorButton = new Button("Create a\nboard", getWidth() / 10 * 9 - 30, getHeight() / 20 - 20, 160, 40, 2);
+        quitButton = new Button("Quit", getWidth()/2 - 100, getHeight()/2 + 325, 200, 100 ,4);
+        loadList.add(true);
+        backButton = new Button("Back", getWidth() / 20 - 30, getHeight() / 20 - 20, 100, 40, 2);
+        loadList.add(true);
+        boardCreatorButton = new Button("Create a board", getWidth() / 10 * 9 - 30, getHeight() / 20 - 20, 160, 40, 2);
         loadList.add(true);
         boardClearButton = new Button("Clear", getWidth() / 20 - 30, getHeight() / 20 + 40, 100, 40, 2);
         goalPopup = new Popup("Pick your goal:", "Stars", "Wins", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3);
