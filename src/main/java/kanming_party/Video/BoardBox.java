@@ -61,6 +61,10 @@ public class BoardBox extends Drawable implements Serializable{
         type = t;
     }
 
+    public int getType(){
+        return type;
+    }
+
     boolean checkCollision(int mouseX, int mouseY) {
         isMouseColliding = super.checkCollision(mouseX, mouseY, x, y, size, size);
         return isMouseColliding;
