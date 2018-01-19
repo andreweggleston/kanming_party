@@ -1,5 +1,6 @@
 package kanming_party.Video;
 
+import com.sun.xml.internal.bind.v2.TODO;
 import kanming_party.Game.Game;
 import kanming_party.Game.GameConstants;
 
@@ -21,6 +22,7 @@ public class Panel extends JPanel {
     private Button testPopupButton;
     private Button boardCreatorButton;
     private Button quitButton;
+    private Button testRoll;
 
     private Button boardClearButton;
 
@@ -32,6 +34,8 @@ public class Panel extends JPanel {
     private ObjectInputStream ois;
 
     private Popup goalPopup;
+
+    private Popup rollPopup;
 
     private int mouseX, mouseY;
 
@@ -140,6 +144,12 @@ public class Panel extends JPanel {
                         }
                         screen = ScreenConstants.TEST;
                     }
+                    if (testRoll.checkCollision(mouseX, mouseY)) {
+                        if (rollPopup.isHidden()) {
+                            rollPopup.toggleHide();
+                        }
+                        screen = ScreenConstants.TESTROLL;
+                    }
                     if (boardCreatorButton.checkCollision(mouseX, mouseY)) {
                         screen = ScreenConstants.BOARDCREATOR;
                     }
@@ -152,6 +162,12 @@ public class Panel extends JPanel {
                         if (goalPopup.checkCollisionOption1(mouseX, mouseY)) {
                             goalPopup.toggleHide();
                         } else if (goalPopup.checkCollisionOption2(mouseX, mouseY)) {
+                            goalPopup.toggleHide();
+                        }
+                    }
+
+                    if (screen == ScreenConstants.TESTROLL) {
+                        if (rollPopup.checkCollisionOption1(mouseX, mouseY)) {
                             goalPopup.toggleHide();
                         }
                     }
@@ -226,6 +242,9 @@ public class Panel extends JPanel {
 
                 boardCreatorButton.checkCollision(mouseX, mouseY);
                 boardCreatorButton.draw(g2);
+
+                testRoll.checkCollision(mouseX, mouseY);
+                testRoll.draw(g2);
 
             } else if (screen != ScreenConstants.GAME) {
                 backButton.checkCollision(mouseX, mouseY);
@@ -306,7 +325,7 @@ public class Panel extends JPanel {
         loadList.add(true);
         hostButton = new Button("Host Game", getWidth() / 2 - 125, getHeight() / 2 + 25, 250, 100, 4);
         loadList.add(true);
-        testPopupButton = new Button("Test Popup", getWidth() / 2 - 125, getHeight() / 2 + 175, 250, 100, 4);
+        testPopupButton = new Button("Test Popup", getWidth() / 2 - 260, getHeight() / 2 + 175, 250, 100, 4);
         loadList.add(true);
         quitButton = new Button("Quit", getWidth()/2 - 100, getHeight()/2 + 325, 200, 100 ,4);
         loadList.add(true);
@@ -316,6 +335,10 @@ public class Panel extends JPanel {
         loadList.add(true);
         boardClearButton = new Button("Clear", getWidth() / 20 - 30, getHeight() / 20 + 40, 100, 40, 2);
         goalPopup = new Popup("Pick your goal:", "Stars", "Wins", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3);
+        loadList.add(true);
+        testRoll = new Button("Test Roll", getWidth() / 2 +10, getHeight() / 2 + 175, 250, 100, 4);
+        loadList.add(true);
+        rollPopup = new Dice("Roll die!", "Roll", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3); //TODO: fix this!
         loadList.add(true);
         return true;
     }

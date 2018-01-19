@@ -2,31 +2,31 @@ package kanming_party.Video;
 
 import java.awt.*;
 
-class Popup extends Drawable {
+/**
+ * Created by student on 1/19/18.
+ */
+public class Dice extends Popup {
 
     private String header;
-
-    private boolean isMouseColliding1, isMouseColliding2;
-
-    private Button option1, option2;
-
+    private Button option1;
     private int x, y, width, height;
 
     private boolean hidden;
 
-    Popup(String header, String option1, String option2, int x, int y, int width, int height) {
-        this.header = header;
+    private int r; //r for roll
+
+    public Dice(String header, String option1, int x, int y, int width, int height) {
+
         this.option1 = new Button(option1, x + width / 5, y + (height * 2) / 3, width / 5, height / 5, 2);
-        this.option2 = new Button(option2, x + (width * 3) / 5, y + (height * 2) / 3, width / 5, height / 5, 2);
+        this.header = header;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-    }
-
-    public Popup() {
+        r= (int)(Math.random()*6+1);
 
     }
+
 
     public void draw(Graphics2D g2) {
         if (!hidden) {
@@ -41,7 +41,6 @@ class Popup extends Drawable {
             int y = this.y + ((height / 2 - metrics.getHeight()) / 2) + metrics.getAscent();
             g2.drawString(header, x, y);
             option1.draw(g2);
-            option2.draw(g2);
         }
     }
 
@@ -50,7 +49,7 @@ class Popup extends Drawable {
     }
 
     boolean checkCollision(int mouseX, int mouseY) {
-        return option1.checkCollision(mouseX, mouseY) || option2.checkCollision(mouseX, mouseY); //just so this class plays nice with Drawable
+        return option1.checkCollision(mouseX, mouseY);
     }
 
     boolean checkCollisionOption1(int mouseX, int mouseY) {
@@ -61,7 +60,5 @@ class Popup extends Drawable {
         return hidden;
     }
 
-    boolean checkCollisionOption2(int mouseX, int mouseY) {
-        return option2.checkCollision(mouseX, mouseY) && !hidden;
-    }
 }
+
