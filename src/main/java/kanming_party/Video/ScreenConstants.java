@@ -13,5 +13,7 @@ interface ScreenConstants {
 
     int BOARDCREATOR = 5;
 
+    int TESTROLL = 6;
+
 
 }
