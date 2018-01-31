@@ -11,7 +11,7 @@ import java.awt.*;
  */
 public class Tile extends Drawable{
     private int type;
-    private int[] directions;
+    private boolean[] directions = new boolean[4];
     
     public Tile(){
         this(GameConstants.TILE_EMPTY);

@@ -1,8 +1,10 @@
 package kanming_party.Video;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import kanming_party.Game.Game;
 import kanming_party.Game.GameConstants;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,6 +29,7 @@ public class Panel extends JPanel {
     private Button boardClearButton;
 
     private int currentSelectedTileType;
+    private boolean[] currentSelectedDirections = new boolean[4];
 
     private BoardBox[][] boardCreatorBoxes = new BoardBox[10][10];
 
@@ -68,6 +71,20 @@ public class Panel extends JPanel {
             @Override
             public void keyTyped(KeyEvent e) {
                 switch (e.getKeyChar()) {
+                    case 'i':
+                        currentSelectedDirections[GameConstants.DIR_UP] ^= true;
+                        break;
+                    case 'l':
+                        currentSelectedDirections[GameConstants.DIR_RIGHT] ^= true;
+                        break;
+                    case 'k':
+                        currentSelectedDirections[GameConstants.DIR_DOWN] ^= true;
+                        break;
+                    case 'j':
+                        currentSelectedDirections[GameConstants.DIR_LEFT] ^= true;
+                        break;
+                }
+                switch (e.getKeyChar()) {
                     case 'f':
                         currentSelectedTileType = GameConstants.TILE_EMPTY;
                         break;
@@ -93,14 +110,16 @@ public class Panel extends JPanel {
                         break;
 
                     case 'p':
-                        try {
-                            oos = new ObjectOutputStream(new FileOutputStream("src/main/resources/gameBoardTemp.data"));
-                            oos.writeObject(boardCreatorBoxes);
-                            copyFile(new File("src/main/resources/gameBoardTemp.data"), new File("src/main/resources/gameBoard.data"));
-                            oos.close();
-                        } catch (IOException e1) {
-                            e1.printStackTrace();
-                        }
+//                        try {
+//                            oos = new ObjectOutputStream(new FileOutputStream("src/main/resources/gameBoardTemp.data"));
+//                            oos.writeObject(boardCreatorBoxes);
+//                            copyFile(new File("src/main/resources/gameBoardTemp.data"), new File("src/main/resources/gameBoard.data"));
+//                            oos.close();
+//                        } catch (IOException e1) {
+//                            e1.printStackTrace();
+//                        }
+
+                        saveBoard();
                         break;
                     case 'o':
                         try {
@@ -135,7 +154,7 @@ public class Panel extends JPanel {
                     if (hostButton.checkCollision(mouseX, mouseY)) {
                         screen = ScreenConstants.HOST;
                     }
-                    if (quitButton.checkCollision(mouseX, mouseY)){
+                    if (quitButton.checkCollision(mouseX, mouseY)) {
                         System.exit(0);
                     }
                     if (testPopupButton.checkCollision(mouseX, mouseY)) {
@@ -211,7 +230,7 @@ public class Panel extends JPanel {
 
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        g2.clearRect(0,0, getWidth(), getHeight());
+        g2.clearRect(0, 0, getWidth(), getHeight());
 
 //        drawAvailableFonts(g2);
 
@@ -327,7 +346,7 @@ public class Panel extends JPanel {
         loadList.add(true);
         testPopupButton = new Button("Test Popup", getWidth() / 2 - 260, getHeight() / 2 + 175, 250, 100, 4);
         loadList.add(true);
-        quitButton = new Button("Quit", getWidth()/2 - 100, getHeight()/2 + 325, 200, 100 ,4);
+        quitButton = new Button("Quit", getWidth() / 2 - 100, getHeight() / 2 + 325, 200, 100, 4);
         loadList.add(true);
         backButton = new Button("Back", getWidth() / 20 - 30, getHeight() / 20 - 20, 100, 40, 2);
         loadList.add(true);
@@ -336,7 +355,7 @@ public class Panel extends JPanel {
         boardClearButton = new Button("Clear", getWidth() / 20 - 30, getHeight() / 20 + 40, 100, 40, 2);
         goalPopup = new Popup("Pick your goal:", "Stars", "Wins", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3);
         loadList.add(true);
-        testRoll = new Button("Test Roll", getWidth() / 2 +10, getHeight() / 2 + 175, 250, 100, 4);
+        testRoll = new Button("Test Roll", getWidth() / 2 + 10, getHeight() / 2 + 175, 250, 100, 4);
         loadList.add(true);
         rollPopup = new Dice("Roll die!", "Roll", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3); //TODO: fix this!
         loadList.add(true);
@@ -372,6 +391,39 @@ public class Panel extends JPanel {
             in.close();
             assert out != null;
             out.close();
+        }
+    }
+
+    private void saveBoard() {
+
+        JSONObject jsonFile = new JSONObject();
+        JSONObject jsonTile = new JSONObject();
+        JSONArray directionArray = new JSONArray();
+        directionArray.add(false);
+        directionArray.add(false);
+        directionArray.add(false);
+        directionArray.add(false);
+
+
+
+        for (int x = 0; x < boardCreatorBoxes.length; x++) {
+            for (int y = 0; y < boardCreatorBoxes[0].length; y++) {
+                for (int i = 0; i < boardCreatorBoxes[x][y].getDirections().length; i++) {
+                    directionArray.set(i, boardCreatorBoxes[x][y].getDirections()[i]);
+                }
+                jsonTile.put("type", boardCreatorBoxes[x][y].getType());
+                jsonTile.put("directions", directionArray);
+                jsonFile.put("tile" + Integer.toString(x) + Integer.toString(y), jsonTile);
+            }
+        }
+
+
+        try {
+            FileWriter fileWriter = new FileWriter("src/main/resources/board.json");
+            fileWriter.write(jsonFile.toJSONString());
+            fileWriter.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
