@@ -38,7 +38,7 @@ public class Panel extends JPanel {
 
     private Popup goalPopup;
 
-    private Popup rollPopup;
+    private Dice rollDice;
 
     private int mouseX, mouseY;
 
@@ -164,8 +164,8 @@ public class Panel extends JPanel {
                         screen = ScreenConstants.TEST;
                     }
                     if (testRoll.checkCollision(mouseX, mouseY)) {
-                        if (rollPopup.isHidden()) {
-                            rollPopup.toggleHide();
+                        if (rollDice.isHidden()) {
+                            rollDice.toggleHide();
                         }
                         screen = ScreenConstants.TESTROLL;
                     }
@@ -186,8 +186,8 @@ public class Panel extends JPanel {
                     }
 
                     if (screen == ScreenConstants.TESTROLL) {
-                        if (rollPopup.checkCollisionOption1(mouseX, mouseY)) {
-                            goalPopup.toggleHide();
+                        if (rollDice.checkCollisionOption1(mouseX, mouseY)) {
+                            rollDice.roll();
                         }
                     }
 
@@ -309,6 +309,9 @@ public class Panel extends JPanel {
 
                     boardClearButton.checkCollision(mouseX, mouseY);
                     boardClearButton.draw(g2);
+                } else if (screen == ScreenConstants.TESTROLL){
+                    rollDice.checkCollision(mouseX, mouseY);
+                    rollDice.draw(g2);
                 }
             }
 
@@ -357,7 +360,7 @@ public class Panel extends JPanel {
         loadList.add(true);
         testRoll = new Button("Test Roll", getWidth() / 2 + 10, getHeight() / 2 + 175, 250, 100, 4);
         loadList.add(true);
-        rollPopup = new Dice("Roll die!", "Roll", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3); //TODO: fix this!
+        rollDice = new Dice("Roll die!", "Roll", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3);
         loadList.add(true);
         return true;
     }
