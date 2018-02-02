@@ -21,6 +21,15 @@ public class Tile extends Drawable{
         this.type = type;
     }
 
+    public Tile(int type, boolean[] directions){
+        this.directions = directions;
+        this.type = type;
+    }
+
+    public boolean[] getDirections(){
+        return directions;
+    }
+
     public boolean isTwoWay(){
         return directions.length>1;
     }

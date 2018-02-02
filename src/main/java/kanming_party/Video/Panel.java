@@ -3,6 +3,7 @@ package kanming_party.Video;
 import kanming_party.Game.Game;
 import kanming_party.Game.GameConstants;
 
+import kanming_party.User.User;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -11,6 +12,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 public class Panel extends JPanel {
 
@@ -149,7 +151,8 @@ public class Panel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (screen == ScreenConstants.MAIN_MENU) {
                     if (joinButton.checkCollision(mouseX, mouseY)) {
-                        screen = ScreenConstants.JOIN;
+                        screen = ScreenConstants.GAME;
+//                        game = new Game();
                     }
                     if (hostButton.checkCollision(mouseX, mouseY)) {
                         screen = ScreenConstants.HOST;
@@ -203,6 +206,12 @@ public class Panel extends JPanel {
                             }
                         }
                     }
+
+                    if (screen == ScreenConstants.JOIN) {
+
+                    }
+                } else if (screen == ScreenConstants.GAME) {
+
                 }
             }
 
@@ -309,9 +318,11 @@ public class Panel extends JPanel {
 
                     boardClearButton.checkCollision(mouseX, mouseY);
                     boardClearButton.draw(g2);
-                } else if (screen == ScreenConstants.TESTROLL){
+                } else if (screen == ScreenConstants.TESTROLL) {
                     rollDice.checkCollision(mouseX, mouseY);
                     rollDice.draw(g2);
+                } else if (screen == ScreenConstants.JOIN) {
+
                 }
             }
 
@@ -408,25 +419,28 @@ public class Panel extends JPanel {
         directionArray.add(false);
 
 
-
         for (int x = 0; x < boardCreatorBoxes.length; x++) {
             for (int y = 0; y < boardCreatorBoxes[0].length; y++) {
+                System.out.print(x + " " + y + " ");
                 for (int i = 0; i < boardCreatorBoxes[x][y].getDirections().length; i++) {
                     directionArray.set(i, boardCreatorBoxes[x][y].getDirections()[i]);
                 }
                 jsonTile.put("type", boardCreatorBoxes[x][y].getType());
-                jsonTile.put("directions", directionArray);
-                jsonFile.put("tile" + Integer.toString(x) + Integer.toString(y), jsonTile);
+                jsonTile.put("directions", directionArray.clone());
+                jsonFile.put("tile" + Integer.toString(x) + Integer.toString(y), jsonTile.clone());
+                System.out.println();
+
+
+                try {
+                    FileWriter fileWriter = new FileWriter("src/main/resources/board.json");
+                    fileWriter.write(jsonFile.toJSONString());
+                    fileWriter.flush();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 
 
-        try {
-            FileWriter fileWriter = new FileWriter("src/main/resources/board.json");
-            fileWriter.write(jsonFile.toJSONString());
-            fileWriter.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

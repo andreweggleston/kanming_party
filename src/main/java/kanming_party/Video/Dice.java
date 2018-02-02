@@ -1,6 +1,7 @@
 package kanming_party.Video;
 
 import java.awt.*;
+import java.net.Inet4Address;
 
 /**
  * Created by student on 1/19/18.
@@ -14,6 +15,8 @@ public class Dice extends Popup {
     private boolean hidden;
 
     private boolean rolled;
+
+    private int rollcounter;
 
     private int r; //r for roll
 
@@ -43,12 +46,16 @@ public class Dice extends Popup {
             g2.drawString(header, x, y);
             if (!rolled)
                 option1.draw(g2);
-            if (rolled){
+            if (rolled) {
                 Font oldFont = g2.getFont();
                 g2.setFont(new Font("Helvetica Neue", g2.getFont().getStyle(), 80));
                 x = this.x + (width - metrics.stringWidth(Integer.toString(r))) / 2 - 20;
-                y = this.y + ((height*4 / 3 - metrics.getHeight()) / 2) + metrics.getAscent();
-                g2.drawString(Integer.toString(r), x, y);
+                y = this.y + ((height * 4 / 3 - metrics.getHeight()) / 2) + metrics.getAscent();
+                if (rollcounter < 48) {
+                    g2.drawString(Integer.toString((int) (Math.random() * 6 + 1)), x, y);
+                    rollcounter++;
+                }
+                else g2.drawString(Integer.toString(r), x, y);
                 g2.setFont(oldFont);
             }
         }
@@ -75,10 +82,5 @@ public class Dice extends Popup {
     public boolean isHidden() {
         return hidden;
     }
-
-    public boolean isRolled(){
-        return rolled;
-    }
-
 }
 

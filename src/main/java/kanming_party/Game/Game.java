@@ -12,6 +12,10 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 public class Game {
     private int chapter;
     private ArrayList<User> users;
@@ -31,8 +35,8 @@ public class Game {
         turn = 1;
 
         try {
-            setGameBoard("src/main/resources/"+gameBoardName+".data");
-        } catch (IOException | ClassNotFoundException e) {
+            setGameBoard("src/main/resources/"+gameBoardName+".data"); // TODO: 2/1/18
+        } catch (IOException | ClassNotFoundException | ParseException e) {
             e.printStackTrace();
         }
 
@@ -53,11 +57,17 @@ public class Game {
         return "idiot"; // TODO: 1/12/18 not correct
     }
 
-    private void setGameBoard(String inputStream) throws IOException, ClassNotFoundException {
+    private void setGameBoard(String inputStream) throws IOException, ClassNotFoundException, ParseException {
         ObjectInputStream ois = new ObjectInputStream(new FileInputStream(inputStream));
         BoardBox[][] savedBoard = (BoardBox[][]) ois.readObject();
         ois.close();
 
+        JSONParser parser = new JSONParser();
+
+        JSONObject boardJson = (JSONObject) parser.parse(inputStream);
+
+
+        
         gameBoard = new Tile[savedBoard.length][savedBoard[0].length];
         for (int i = 0; i < savedBoard.length; i++) {
             for (int j = 0; j < savedBoard[i].length; j++) {
