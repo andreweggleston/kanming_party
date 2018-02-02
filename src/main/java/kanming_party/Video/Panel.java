@@ -6,6 +6,8 @@ import kanming_party.Game.GameConstants;
 import kanming_party.User.User;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -112,25 +114,10 @@ public class Panel extends JPanel {
                         break;
 
                     case 'p':
-//                        try {
-//                            oos = new ObjectOutputStream(new FileOutputStream("src/main/resources/gameBoardTemp.data"));
-//                            oos.writeObject(boardCreatorBoxes);
-//                            copyFile(new File("src/main/resources/gameBoardTemp.data"), new File("src/main/resources/gameBoard.data"));
-//                            oos.close();
-//                        } catch (IOException e1) {
-//                            e1.printStackTrace();
-//                        }
-
                         saveBoard();
                         break;
                     case 'o':
-                        try {
-                            ois = new ObjectInputStream(new FileInputStream("src/main/resources/gameBoard.data"));
-                            boardCreatorBoxes = (BoardBox[][]) ois.readObject();
-                            ois.close();
-                        } catch (IOException | ClassNotFoundException e1) {
-                            e1.printStackTrace();
-                        }
+                        loadBoard();
                         break;
                 }
             }
@@ -235,6 +222,37 @@ public class Panel extends JPanel {
 
             }
         });
+    }
+
+    private void loadBoard() {
+
+        JSONParser parser = new JSONParser();
+
+
+        JSONObject boardJson = null;
+        try {
+            boardJson = (JSONObject) parser.parse(new FileReader("src/main/resources/board.json"));
+        } catch (ParseException | IOException e) {
+            e.printStackTrace();
+        }
+
+        boolean[] directions = new boolean[4];
+
+        for (int i = 0; i < Math.sqrt(boardJson.values().size()); i++) {
+            for (int j = 0; j < Math.sqrt(boardJson.values().size()); j++) {
+                JSONObject jsonTile = (JSONObject) boardJson.get("tile" + Integer.toString(i) + Integer.toString(j));
+                JSONArray jsonDirections = (JSONArray) jsonTile.get("directions");
+
+                for (int k = 0; k < jsonDirections.size(); k++) {
+                    directions[k] = (boolean) jsonDirections.get(k);
+                }
+
+                long type = (long) jsonTile.get("type");           //you have to fucking cast this shit to long and then back to int. WHY??
+                boardCreatorBoxes[i][j].setType(((int) type));
+                boardCreatorBoxes[i][j].setDirections(directions);
+            }
+        }
+
     }
 
     public void paint(Graphics g) {

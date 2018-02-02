@@ -31,7 +31,13 @@ public class Tile extends Drawable{
     }
 
     public boolean isTwoWay(){
-        return directions.length>1;
+        int count = 0;
+        for (boolean direction : directions) {
+            if (direction) {
+                count++;
+            }
+        }
+        return count>1;
     }
 
     @Override
