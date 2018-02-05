@@ -139,7 +139,9 @@ public class Panel extends JPanel {
                 if (screen == ScreenConstants.MAIN_MENU) {
                     if (joinButton.checkCollision(mouseX, mouseY)) {
                         screen = ScreenConstants.GAME;
-//                        game = new Game();
+                        ArrayList<User> users = new ArrayList<>();
+                        users.add(new User("dumbass", "dubstepper"));
+                        game = new Game(users, "board");
                     }
                     if (hostButton.checkCollision(mouseX, mouseY)) {
                         screen = ScreenConstants.HOST;
@@ -197,8 +199,6 @@ public class Panel extends JPanel {
                     if (screen == ScreenConstants.JOIN) {
 
                     }
-                } else if (screen == ScreenConstants.GAME) {
-
                 }
             }
 
@@ -342,6 +342,13 @@ public class Panel extends JPanel {
                 } else if (screen == ScreenConstants.JOIN) {
 
                 }
+            } else { //player is in game!!
+
+
+                //code here for what happens in game; draw board
+
+
+
             }
 
 
