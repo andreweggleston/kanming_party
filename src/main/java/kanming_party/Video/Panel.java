@@ -257,6 +257,8 @@ public class Panel extends JPanel {
 
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
+        RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHints(rh);
         g2.clearRect(0, 0, getWidth(), getHeight());
 
 //        drawAvailableFonts(g2);
