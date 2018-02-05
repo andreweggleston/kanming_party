@@ -4,6 +4,8 @@ import kanming_party.Video.Drawable;
 
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
+
 import kanming_party.Game.GameConstants;
 
 public class User extends Drawable{
@@ -25,10 +27,9 @@ public class User extends Drawable{
     private boolean isAlive;
 
 
-    public User(String name, int id, String spriteSelection){
+    public User(String name, String spriteSelection){
         this.name = name;
-        this.id = id;
-        avatar = new UserAvatar(spriteSelection);
+
         goalType = GameConstants.GOAL_STARS;
         goalStage = 0;
         currentGoal = GameConstants.STAR_GOALS.get(goalStage);
@@ -50,10 +51,6 @@ public class User extends Drawable{
                 currentGoal = GameConstants.BATTLE_GOALS.get(goalStage);
                 break;
         }
-    }
-
-    public File getAvatarProfileImage(){
-        return avatar.getAvatarProfileImage();
     }
 
     public int getId(){
@@ -86,6 +83,27 @@ public class User extends Drawable{
 
     public int addWins(int wins){
         return this.wins += wins;
+    }
+
+    private File avatarImage;
+    private File avatarProfileImage;
+
+    private void setAvatar(String spriteName) throws IOException{
+        switch (spriteName){
+            case "idiot":
+                avatarImage = new File("idiot_avatar_image.png");
+                avatarProfileImage = new File("idiot_profile_image.png");
+                break;
+            //TODO: etc
+        }
+    }
+
+    public File getAvatarImageFile(){
+        return avatarImage;
+    }
+
+    public File getAvatarProfileImage() {
+        return avatarProfileImage;
     }
 
 }
