@@ -3,14 +3,18 @@ package kanming_party.Video;
 import kanming_party.Game.Game;
 import kanming_party.Game.GameConstants;
 
+import kanming_party.User.User;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 public class Panel extends JPanel {
 
@@ -110,25 +114,10 @@ public class Panel extends JPanel {
                         break;
 
                     case 'p':
-//                        try {
-//                            oos = new ObjectOutputStream(new FileOutputStream("src/main/resources/gameBoardTemp.data"));
-//                            oos.writeObject(boardCreatorBoxes);
-//                            copyFile(new File("src/main/resources/gameBoardTemp.data"), new File("src/main/resources/gameBoard.data"));
-//                            oos.close();
-//                        } catch (IOException e1) {
-//                            e1.printStackTrace();
-//                        }
-
                         saveBoard();
                         break;
                     case 'o':
-                        try {
-                            ois = new ObjectInputStream(new FileInputStream("src/main/resources/gameBoard.data"));
-                            boardCreatorBoxes = (BoardBox[][]) ois.readObject();
-                            ois.close();
-                        } catch (IOException | ClassNotFoundException e1) {
-                            e1.printStackTrace();
-                        }
+                        loadBoard();
                         break;
                 }
             }
@@ -149,7 +138,8 @@ public class Panel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (screen == ScreenConstants.MAIN_MENU) {
                     if (joinButton.checkCollision(mouseX, mouseY)) {
-                        screen = ScreenConstants.JOIN;
+                        screen = ScreenConstants.GAME;
+//                        game = new Game();
                     }
                     if (hostButton.checkCollision(mouseX, mouseY)) {
                         screen = ScreenConstants.HOST;
@@ -203,6 +193,12 @@ public class Panel extends JPanel {
                             }
                         }
                     }
+
+                    if (screen == ScreenConstants.JOIN) {
+
+                    }
+                } else if (screen == ScreenConstants.GAME) {
+
                 }
             }
 
@@ -226,6 +222,37 @@ public class Panel extends JPanel {
 
             }
         });
+    }
+
+    private void loadBoard() {
+
+        JSONParser parser = new JSONParser();
+
+
+        JSONObject boardJson = null;
+        try {
+            boardJson = (JSONObject) parser.parse(new FileReader("src/main/resources/board.json"));
+        } catch (ParseException | IOException e) {
+            e.printStackTrace();
+        }
+
+        boolean[] directions = new boolean[4];
+
+        for (int i = 0; i < Math.sqrt(boardJson.values().size()); i++) {
+            for (int j = 0; j < Math.sqrt(boardJson.values().size()); j++) {
+                JSONObject jsonTile = (JSONObject) boardJson.get("tile" + Integer.toString(i) + Integer.toString(j));
+                JSONArray jsonDirections = (JSONArray) jsonTile.get("directions");
+
+                for (int k = 0; k < jsonDirections.size(); k++) {
+                    directions[k] = (boolean) jsonDirections.get(k);
+                }
+
+                long type = (long) jsonTile.get("type");           //you have to fucking cast this shit to long and then back to int. WHY??
+                boardCreatorBoxes[i][j].setType(((int) type));
+                boardCreatorBoxes[i][j].setDirections(directions);
+            }
+        }
+
     }
 
     public void paint(Graphics g) {
@@ -309,9 +336,11 @@ public class Panel extends JPanel {
 
                     boardClearButton.checkCollision(mouseX, mouseY);
                     boardClearButton.draw(g2);
-                } else if (screen == ScreenConstants.TESTROLL){
+                } else if (screen == ScreenConstants.TESTROLL) {
                     rollDice.checkCollision(mouseX, mouseY);
                     rollDice.draw(g2);
+                } else if (screen == ScreenConstants.JOIN) {
+
                 }
             }
 
@@ -408,25 +437,28 @@ public class Panel extends JPanel {
         directionArray.add(false);
 
 
-
         for (int x = 0; x < boardCreatorBoxes.length; x++) {
             for (int y = 0; y < boardCreatorBoxes[0].length; y++) {
+                System.out.print(x + " " + y + " ");
                 for (int i = 0; i < boardCreatorBoxes[x][y].getDirections().length; i++) {
                     directionArray.set(i, boardCreatorBoxes[x][y].getDirections()[i]);
                 }
                 jsonTile.put("type", boardCreatorBoxes[x][y].getType());
-                jsonTile.put("directions", directionArray);
-                jsonFile.put("tile" + Integer.toString(x) + Integer.toString(y), jsonTile);
+                jsonTile.put("directions", directionArray.clone());
+                jsonFile.put("tile" + Integer.toString(x) + Integer.toString(y), jsonTile.clone());
+                System.out.println();
+
+
+                try {
+                    FileWriter fileWriter = new FileWriter("src/main/resources/board.json");
+                    fileWriter.write(jsonFile.toJSONString());
+                    fileWriter.flush();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 
 
-        try {
-            FileWriter fileWriter = new FileWriter("src/main/resources/board.json");
-            fileWriter.write(jsonFile.toJSONString());
-            fileWriter.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
