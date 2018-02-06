@@ -18,6 +18,10 @@ class Button extends Drawable {
         this.scale = scale;
     }
 
+    public void setText(String string){
+        this.string = string;
+    }
+
     @Override
     public void draw(Graphics2D g2) {
         if (isMouseColliding) g2.setColor((new Color(210, 170, 19)));
@@ -57,5 +61,8 @@ class Button extends Drawable {
         return height;
     }
 
+    public String getText(){
+        return string;
+    }
 
 }

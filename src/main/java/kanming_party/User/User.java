@@ -1,5 +1,6 @@
 package kanming_party.User;
 
+import kanming_party.Game.Gameboard.Point2D;
 import kanming_party.Video.Drawable;
 
 import java.awt.*;
@@ -8,19 +9,21 @@ import java.io.IOException;
 
 import kanming_party.Game.GameConstants;
 
+import javax.imageio.ImageIO;
+
 public class User extends Drawable{
 
     private String name;
 
     private int id;
 
-    private int x, y, width, height;
-
-    private UserAvatar avatar;
+    private int x, y;
 
     private int currentGoal, goalType, goalStage;
 
     private int stars, wins;
+
+    private Image avatar;
 
     private int boardLocationX, boardLocationY;
 
@@ -29,7 +32,11 @@ public class User extends Drawable{
 
     public User(String name, String spriteSelection){
         this.name = name;
-
+        try {
+            setAvatar(spriteSelection);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         goalType = GameConstants.GOAL_STARS;
         goalStage = 0;
         currentGoal = GameConstants.STAR_GOALS.get(goalStage);
@@ -38,6 +45,18 @@ public class User extends Drawable{
     @Override
     public void draw(Graphics2D g2) {
 
+
+
+
+    }
+
+    public Point2D getBoardLoc(){
+        return new Point2D(boardLocationX, boardLocationY);
+    }
+
+    public void setBoardLoc(int x, int y){
+        boardLocationX = x;
+        boardLocationY = y;
     }
 
     public void setGoal(int goalType){
@@ -85,25 +104,18 @@ public class User extends Drawable{
         return this.wins += wins;
     }
 
-    private File avatarImage;
-    private File avatarProfileImage;
-
     private void setAvatar(String spriteName) throws IOException{
         switch (spriteName){
-            case "idiot":
-                avatarImage = new File("idiot_avatar_image.png");
-                avatarProfileImage = new File("idiot_profile_image.png");
+            case "dubstepper":
+                avatar = ImageIO.read(new File("src/main/resources/personas/Super-Groovy-Dank-Dubstepper.png"));
                 break;
             //TODO: etc
         }
     }
 
-    public File getAvatarImageFile(){
-        return avatarImage;
-    }
 
-    public File getAvatarProfileImage() {
-        return avatarProfileImage;
+    public boolean isAlive(){
+        return isAlive;
     }
 
 }

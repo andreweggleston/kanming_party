@@ -3,6 +3,7 @@ package kanming_party.Video;
 import kanming_party.Game.Game;
 import kanming_party.Game.GameConstants;
 
+import kanming_party.Game.Gameboard.Tile;
 import kanming_party.User.User;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -37,14 +38,15 @@ public class Panel extends JPanel {
 
     private BoardBox[][] boardCreatorBoxes = new BoardBox[10][10];
 
-    private ObjectOutputStream oos;
-    private ObjectInputStream ois;
-
     private Popup goalPopup;
+
+    private Popup directionPopup;
 
     private Dice rollDice;
 
     private int mouseX, mouseY;
+
+    private int selectedPopupOption;
 
     private boolean buttonsInitialized;
 
@@ -199,6 +201,15 @@ public class Panel extends JPanel {
                     if (screen == ScreenConstants.JOIN) {
 
                     }
+                } else {
+                    if (directionPopup.checkCollisionOption1(mouseX, mouseY)){
+                        directionPopup.toggleHide();
+                        selectedPopupOption = 0;
+                    }else if (directionPopup.checkCollisionOption2(mouseX, mouseY)){
+                        directionPopup.toggleHide();
+                        selectedPopupOption = 1;
+                    }
+
                 }
             }
 
@@ -318,6 +329,59 @@ public class Panel extends JPanel {
 
                 //code here for what happens in game; draw board
 
+                for (int i = 0; i < game.getGameBoard().length; i++) {
+                    for (int j = 0; j < game.getGameBoard()[0].length; j++) {
+                        game.getGameBoard()[i][j].draw(g2, getWidth(), getHeight());
+                    }
+                }
+
+                if (game.getCurrentPlayer().isAlive()) {
+                    rollDice.reset();
+                    if (rollDice.isRolled()) {
+                        Tile currentTile = game.getGameBoard()[game.getCurrentPlayer().getBoardLoc().X()][game.getCurrentPlayer().getBoardLoc().Y()];
+                        if (currentTile.isTwoWay()) {
+                            ArrayList<Integer> ints = new ArrayList<>();
+                            for (int i = 0; i < currentTile.getDirections().length; i++) {
+                                if (currentTile.getDirections()[i]) {
+                                    ints.add(i);
+                                }
+                            }
+                            for (int i = 0; i < ints.size(); i++) {
+                                switch (ints.get(i)) {
+                                    case GameConstants.DIR_UP:
+                                        directionPopup.setOption("Up", i);
+                                        break;
+                                    case GameConstants.DIR_RIGHT:
+                                        directionPopup.setOption("Right", i);
+                                        break;
+                                    case GameConstants.DIR_DOWN:
+                                        directionPopup.setOption("Down", i);
+                                        break;
+                                    case GameConstants.DIR_LEFT:
+                                        directionPopup.setOption("Left", i);
+                                        break;
+                                }
+                            }
+                            directionPopup.draw(g2);
+                            if (directionPopup.isHidden()){
+                                switch (directionPopup.getOptions()[selectedPopupOption]){
+                                    case "Up":
+                                        game.setCurrentPlayerDirection(GameConstants.DIR_UP);
+                                        break;
+                                    case "Right":
+                                        game.setCurrentPlayerDirection(GameConstants.DIR_RIGHT);
+                                        break;
+                                    case "Down":
+                                        game.setCurrentPlayerDirection(GameConstants.DIR_DOWN);
+                                        break;
+                                    case "Left":
+                                        game.setCurrentPlayerDirection(GameConstants.DIR_LEFT);
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
 
 
             }
@@ -351,24 +415,16 @@ public class Panel extends JPanel {
 
     private boolean initializeButtons() {
         joinButton = new Button("Join Game", getWidth() / 2 - 125, getHeight() / 2 - 125, 250, 100, 4);
-        loadList.add(true);
         hostButton = new Button("Host Game", getWidth() / 2 - 125, getHeight() / 2 + 25, 250, 100, 4);
-        loadList.add(true);
         testPopupButton = new Button("Test Popup", getWidth() / 2 - 260, getHeight() / 2 + 175, 250, 100, 4);
-        loadList.add(true);
         quitButton = new Button("Quit", getWidth() / 2 - 100, getHeight() / 2 + 325, 200, 100, 4);
-        loadList.add(true);
         backButton = new Button("Back", getWidth() / 20 - 30, getHeight() / 20 - 20, 100, 40, 2);
-        loadList.add(true);
         boardCreatorButton = new Button("Create a board", getWidth() / 10 * 9 - 30, getHeight() / 20 - 20, 160, 40, 2);
-        loadList.add(true);
         boardClearButton = new Button("Clear", getWidth() / 20 - 30, getHeight() / 20 + 40, 100, 40, 2);
         goalPopup = new Popup("Pick your goal:", "Stars", "Wins", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3);
-        loadList.add(true);
+        directionPopup = new Popup("Which direction?", "null", "null", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3);
         testRoll = new Button("Test Roll", getWidth() / 2 + 10, getHeight() / 2 + 175, 250, 100, 4);
-        loadList.add(true);
         rollDice = new Dice("Roll die!", "Roll", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3);
-        loadList.add(true);
         return true;
     }
 
@@ -428,7 +484,7 @@ public class Panel extends JPanel {
                 }
 
                 //long type = (long) ;           //you have to fucking cast this shit to long and then back to int. WHY??
-                boardCreatorBoxes[i][j].setType((int)((long)jsonTile.get("type")));
+                boardCreatorBoxes[i][j].setType((int) ((long) jsonTile.get("type")));
                 boardCreatorBoxes[i][j].setDirections(directions);
             }
         }
@@ -467,7 +523,6 @@ public class Panel extends JPanel {
                 }
             }
         }
-
 
     }
 }

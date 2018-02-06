@@ -25,9 +25,6 @@ public class Game {
 
     public Game(ArrayList<User> users, String gameBoardName) {
         this.users = new ArrayList<>(users);
-        for (int i = 0; i < this.users.size(); i++) {
-            users.get(i).setId(i + 1);
-        }
         Collections.shuffle(this.users);
 
         turn = 1;
@@ -39,7 +36,11 @@ public class Game {
         }
 
         for (int i = 0; i < 4 - users.size(); i++) {
-            users.add(new Bot(users.size() + 1, pickRandomSprite()));
+            users.add(new Bot(pickRandomSprite()));
+        }
+
+        for (int i = 0; i < this.users.size(); i++) {
+            users.get(i).setId(i + 1);
         }
 
         chapter = 1;
@@ -49,21 +50,22 @@ public class Game {
         return turn;
     }
 
+    public User getCurrentPlayer(){
+        return users.get(getTurn());
+    }
+
+    public void nextTurn(){
+        turn++;
+        if (turn>4){
+            turn = 1;
+        }
+    }
 
     private String pickRandomSprite() {
         return "idiot"; // TODO: 1/12/18 not correct
     }
 
     private void setGameBoard(String inputStream) throws IOException, ClassNotFoundException, ParseException {
-//        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(inputStream));
-//        BoardBox[][] savedBoard = (BoardBox[][]) ois.readObject();
-//        ois.close();
-//        gameBoard = new Tile[savedBoard.length][savedBoard[0].length];
-//        for (int i = 0; i < savedBoard.length; i++) {
-//            for (int j = 0; j < savedBoard[i].length; j++) {
-//                gameBoard[i][j] = new Tile(savedBoard[i][j].getType());
-//            }
-//        }
 
         JSONParser parser = new JSONParser();
 
@@ -80,9 +82,20 @@ public class Game {
                     directions[k] = (boolean) jsonDirections.get(k);
                 }
 
-                int type = (int) jsonTile.get("type");
-                gameBoard[i][j] = new Tile(type, directions);
+                gameBoard[i][j] = new Tile(i, j,(int)(long) jsonTile.get("type"), directions);
             }
         }
+    }
+
+    public void moveCurrentPlayer(int moves){ // TODO: 2/6/18
+
+    }
+
+    public Tile[][] getGameBoard() {
+        return gameBoard;
+    }
+
+    public void setCurrentPlayerDirection(int dir) {
+
     }
 }
