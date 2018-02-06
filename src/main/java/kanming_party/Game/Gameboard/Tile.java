@@ -9,7 +9,7 @@ import java.awt.*;
 /**
  * Created by student on 1/11/18.
  */
-public class Tile extends Drawable{
+public class Tile extends Drawable {
     private int type;
     private boolean[] directions = new boolean[4];
     
