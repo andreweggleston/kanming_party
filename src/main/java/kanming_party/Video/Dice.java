@@ -1,7 +1,6 @@
 package kanming_party.Video;
 
 import java.awt.*;
-import java.net.Inet4Address;
 
 /**
  * Created by student on 1/19/18.

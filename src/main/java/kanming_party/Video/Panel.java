@@ -54,6 +54,10 @@ public class Panel extends JPanel {
     private boolean boardCreatorBoxesInitialized;
 
 
+    private int moveFrameCounter = 0;
+    private int moves;
+
+
     public Panel() {
 
         Timer timer = new Timer(1000 / 24, e -> repaint());
@@ -202,6 +206,12 @@ public class Panel extends JPanel {
 
                     }
                 } else {
+
+                    if (rollDice.checkCollision(mouseX, mouseY)){
+                        rollDice.toggleHide();
+                        rollDice.roll();
+                    }
+
                     if (directionPopup.checkCollisionOption1(mouseX, mouseY)){
                         directionPopup.toggleHide();
                         selectedPopupOption = 0;
@@ -335,9 +345,11 @@ public class Panel extends JPanel {
                     }
                 }
 
+                boolean isAlive = game.getCurrentPlayer().isAlive();
                 if (game.getCurrentPlayer().isAlive()) {
                     rollDice.reset();
                     if (rollDice.isRolled()) {
+                        moves = rollDice.getRoll();
                         Tile currentTile = game.getGameBoard()[game.getCurrentPlayer().getBoardLoc().X()][game.getCurrentPlayer().getBoardLoc().Y()];
                         if (currentTile.isTwoWay()) {
                             ArrayList<Integer> ints = new ArrayList<>();
@@ -379,6 +391,23 @@ public class Panel extends JPanel {
                                         break;
                                 }
                             }
+                        } else {
+                            for (int i = 0; i < currentTile.getDirections().length; i++) {
+                                if (currentTile.getDirections()[i]){
+                                    game.setCurrentPlayerDirection(i);
+                                }
+                            }
+                        }
+                        game.moveCurrentPlayer();
+                        moves--;
+                        if (moves!=0){
+                            if (moveFrameCounter==0){
+                                game.moveCurrentPlayer();
+                                moves--;
+                                moveFrameCounter = 12;
+                            }
+                        }else {
+
                         }
                     }
                 }
@@ -425,6 +454,7 @@ public class Panel extends JPanel {
         directionPopup = new Popup("Which direction?", "null", "null", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3);
         testRoll = new Button("Test Roll", getWidth() / 2 + 10, getHeight() / 2 + 175, 250, 100, 4);
         rollDice = new Dice("Roll die!", "Roll", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3);
+        loadList.add(true);
         return true;
     }
 
