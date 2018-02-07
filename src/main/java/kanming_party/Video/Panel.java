@@ -30,6 +30,7 @@ public class Panel extends JPanel {
     private Button boardCreatorButton;
     private Button quitButton;
     private Button testRoll;
+    private Button moveButton;
 
     private Button boardClearButton;
 
@@ -210,6 +211,10 @@ public class Panel extends JPanel {
                     if (rollDice.checkCollision(mouseX, mouseY)){
                         rollDice.toggleHide();
                         rollDice.roll();
+                    }
+
+                    if (backButton.checkCollision(mouseX, mouseY)) {
+                        screen = ScreenConstants.MAIN_MENU;
                     }
 
                     if (directionPopup.checkCollisionOption1(mouseX, mouseY)){
@@ -410,6 +415,10 @@ public class Panel extends JPanel {
 
                         }
                     }
+                    moveButton.checkCollision(mouseX, mouseY);
+                    moveButton.draw(g2);
+                    backButton.checkCollision(mouseX, mouseY);
+                    backButton.draw(g2);
                 }
 
 
@@ -454,6 +463,7 @@ public class Panel extends JPanel {
         directionPopup = new Popup("Which direction?", "null", "null", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3);
         testRoll = new Button("Test Roll", getWidth() / 2 + 10, getHeight() / 2 + 175, 250, 100, 4);
         rollDice = new Dice("Roll die!", "Roll", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3);
+        moveButton = new Button("Move", 125, getHeight() - 300, 100, 40, 2);
         loadList.add(true);
         return true;
     }
