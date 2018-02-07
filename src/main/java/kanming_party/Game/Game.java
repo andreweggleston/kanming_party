@@ -6,6 +6,7 @@ import kanming_party.User.User;
 import kanming_party.Video.BoardBox;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -19,6 +20,7 @@ public class Game {
     private ArrayList<User> users;
     private int turn;
     private int turnStage;
+    private int direction;
 
     private Tile[][] gameBoard = new Tile[10][10];
 
@@ -27,7 +29,7 @@ public class Game {
         this.users = new ArrayList<>(users);
         Collections.shuffle(this.users);
 
-        turn = 1;
+        turn = 0;
 
         try {
             setGameBoard("src/main/resources/" + gameBoardName + ".json"); // TODO: 2/1/18
@@ -87,7 +89,25 @@ public class Game {
         }
     }
 
-    public void moveCurrentPlayer(int moves){ // TODO: 2/6/18
+    public void moveCurrentPlayer(){ // TODO: 2/6/18
+        int x = getCurrentPlayer().getBoardLoc().X();
+        int y = getCurrentPlayer().getBoardLoc().Y();
+
+
+        switch (direction){
+            case GameConstants.DIR_UP:
+                getCurrentPlayer().setBoardLoc(x, y-1);
+                break;
+            case GameConstants.DIR_RIGHT:
+                getCurrentPlayer().setBoardLoc(x+1, y);
+                break;
+            case GameConstants.DIR_DOWN:
+                getCurrentPlayer().setBoardLoc(x, y+1);
+                break;
+            case GameConstants.DIR_LEFT:
+                getCurrentPlayer().setBoardLoc(x-1, y);
+                break;
+        }
 
     }
 
@@ -96,6 +116,6 @@ public class Game {
     }
 
     public void setCurrentPlayerDirection(int dir) {
-
+        direction = dir;
     }
 }

@@ -27,7 +27,7 @@ public class User extends Drawable{
 
     private int boardLocationX, boardLocationY;
 
-    private boolean isAlive;
+    private boolean isAlive = true;
 
 
     public User(String name, String spriteSelection){
