@@ -67,6 +67,18 @@ public class Dice extends Popup {
         return r;
     }
 
+    public void reset(){
+        rolled = false;
+    }
+
+    public int getRoll(){
+        return r;
+    }
+
+    public boolean isRolled(){
+        return rolled;
+    }
+
     public boolean toggleHide() {
         return hidden = !hidden;
     }

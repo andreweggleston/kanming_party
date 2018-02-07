@@ -49,6 +49,22 @@ class Popup extends Drawable {
         return hidden = !hidden;
     }
 
+    public void setOption(String text, int option){
+        switch (option){
+            case 0:
+                option1.setText(text);
+                break;
+            case 1: option2.setText(text);
+                break;
+        }
+    }
+
+    public String[] getOptions(){
+        return new String[]{option1.getText(), option2.getText()};
+    }
+
+
+
     boolean checkCollision(int mouseX, int mouseY) {
         return option1.checkCollision(mouseX, mouseY) || option2.checkCollision(mouseX, mouseY); //just so this class plays nice with Drawable
     }
