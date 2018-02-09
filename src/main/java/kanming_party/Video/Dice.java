@@ -68,6 +68,8 @@ public class Dice extends Popup {
 
     public void reset(){
         rolled = false;
+        rollcounter = 0;
+        r = 0;
     }
 
     public int getRoll(){

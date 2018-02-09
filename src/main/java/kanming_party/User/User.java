@@ -46,15 +46,28 @@ public class User extends Drawable{
     public void draw(Graphics2D g2) {
 
 
+    }
+
+    public void draw(Graphics2D g2, int panelWidth, int panelHeight){
+
+        int drawnX, drawnY;
+        int size = 80;
+        drawnX = (panelWidth - (10 * size)) / 2 + size * boardLocationX;
+        drawnY = (panelHeight - (10 * size)) / 2 + size * boardLocationY;
+
+
+        g2.setColor(Color.BLACK);
+        g2.fillRect(drawnX+10, drawnY+10, size-20, size-20);
 
 
     }
-
     public Point2D getBoardLoc(){
         return new Point2D(boardLocationX, boardLocationY);
     }
 
     public void setBoardLoc(int x, int y){
+        System.out.println("X: " + x);
+        System.out.println("Y: " + y);
         boardLocationX = x;
         boardLocationY = y;
     }

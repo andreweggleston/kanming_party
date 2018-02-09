@@ -25,6 +25,7 @@ public interface GameConstants {
     int TURNSTAGE_BATTLEPICK = 3;
     int TURNSTAGE_BATTLE = 4;
     int TURNSTAGE_HOMEPICK = 5;
+    int TURNSTAGE_MOVEMENT = 6;
 
     ArrayList<Integer> BATTLE_GOALS = new ArrayList<>(Arrays.asList(2, 4, 7, 9, 15));
     ArrayList<Integer> STAR_GOALS = new ArrayList<>(Arrays.asList(10, 30, 60, 120, 200));

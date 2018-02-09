@@ -12,7 +12,7 @@ class Popup extends Drawable {
 
     private int x, y, width, height;
 
-    private boolean hidden;
+    private boolean hidden = true;
 
     Popup(String header, String option1, String option2, int x, int y, int width, int height) {
         this.header = header;
