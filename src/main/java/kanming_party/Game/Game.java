@@ -81,10 +81,15 @@ public class Game {
                 JSONArray jsonDirections = (JSONArray) jsonTile.get("directions");
 
                 for (int k = 0; k < jsonDirections.size(); k++) {
+
+//                    if ((boolean)jsonDirections.get(k)){
+//                        directions[k] = true;
+//                    }else directions[k] = false;
+
                     directions[k] = (boolean) jsonDirections.get(k);
                 }
 
-                gameBoard[i][j] = new Tile(i, j,(int)(long) jsonTile.get("type"), directions);
+                gameBoard[i][j] = new Tile(i, j,(int)(long) jsonTile.get("type"), directions.clone());
             }
         }
     }
@@ -111,11 +116,25 @@ public class Game {
 
     }
 
+
+
     public Tile[][] getGameBoard() {
         return gameBoard;
     }
 
     public void setCurrentPlayerDirection(int dir) {
         direction = dir;
+    }
+
+    public ArrayList<User> getPlayers() {
+        return users;
+    }
+
+    public void setTurnStage(int turnStage) {
+        this.turnStage = turnStage;
+    }
+
+    public int getTurnStage() {
+        return turnStage;
     }
 }

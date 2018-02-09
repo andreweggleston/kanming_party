@@ -59,6 +59,8 @@ public class Tile extends Drawable {
         drawnY = (panelHeight - (10 * size)) / 2 + size * locY;
 
 
+
+
         switch (type) {
             case GameConstants.TILE_EMPTY:
                 g2.clearRect(drawnX, drawnY, size, size);
@@ -88,6 +90,31 @@ public class Tile extends Drawable {
                 g2.setColor(Color.PINK);
                 g2.fillRect(drawnX, drawnY, size, size);
                 break;
+        }
+
+
+        for (int i = 0; i < directions.length; i++) {
+            if (directions[i]) {
+                if (i == GameConstants.DIR_UP) {
+                    g2.setColor(Color.red);
+                    g2.fillPolygon(new int[]{drawnX + (size / 2), drawnX + (size - 4), drawnX + 4}, new int[]{drawnY + 4, drawnY + (size / 2), drawnY + (size / 2)}, 3);
+                }
+                if (i == GameConstants.DIR_RIGHT) {
+                    g2.setColor(Color.green);
+
+                    g2.fillPolygon(new int[]{drawnX + (size / 2), drawnX + (size - 4), drawnX + (size / 2)}, new int[]{drawnY + 4, drawnY + (size / 2), drawnY + (size - 4)}, 3);
+                }
+                if (i == GameConstants.DIR_DOWN) {
+                    g2.setColor(Color.blue);
+
+                    g2.fillPolygon(new int[]{drawnX + (size / 2), drawnX + (size - 4), drawnX + 4}, new int[]{drawnY + size - 4, drawnY + (size / 2), drawnY + (size / 2)}, 3);
+                }
+                if (i == GameConstants.DIR_LEFT) {
+                    g2.setColor(Color.CYAN);
+
+                    g2.fillPolygon(new int[]{drawnX + (size / 2), drawnX + 4, drawnX + (size / 2)}, new int[]{drawnY + 4, drawnY + (size / 2), drawnY + (size - 4)}, 3);
+                }
+            }
         }
     }
 }

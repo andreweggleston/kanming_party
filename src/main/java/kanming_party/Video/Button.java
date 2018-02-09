@@ -24,6 +24,7 @@ class Button extends Drawable {
 
     @Override
     public void draw(Graphics2D g2) {
+        g2.setColor(Color.BLACK);
         if (isMouseColliding) g2.setColor((new Color(210, 170, 19)));
 
 
@@ -36,7 +37,7 @@ class Button extends Drawable {
         int y = this.y + ((height - metrics.getHeight()) / 2) + metrics.getAscent();
         g2.drawString(string, x, y);
 
-        g2.setColor(new Color(0, 0, 0));
+        g2.setColor(Color.BLACK);
 
     }
 

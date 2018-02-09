@@ -8,11 +8,13 @@ class Popup extends Drawable {
 
     private boolean isMouseColliding1, isMouseColliding2;
 
+    private boolean isClicked;
+
     private Button option1, option2;
 
     private int x, y, width, height;
 
-    private boolean hidden;
+    private boolean hidden = true;
 
     Popup(String header, String option1, String option2, int x, int y, int width, int height) {
         this.header = header;
@@ -70,6 +72,9 @@ class Popup extends Drawable {
     }
 
     boolean checkCollisionOption1(int mouseX, int mouseY) {
+        if(option1.checkCollision(mouseX, mouseY) && !hidden){
+            isClicked = true;
+        }
         return option1.checkCollision(mouseX, mouseY) && !hidden;
     }
 
@@ -78,6 +83,17 @@ class Popup extends Drawable {
     }
 
     boolean checkCollisionOption2(int mouseX, int mouseY) {
+        if(option2.checkCollision(mouseX, mouseY) && !hidden){
+            isClicked = true;
+        }
         return option2.checkCollision(mouseX, mouseY) && !hidden;
+    }
+
+    public boolean isClicked() {
+        return isClicked;
+    }
+
+    public void reset(){
+        isClicked = false;
     }
 }
