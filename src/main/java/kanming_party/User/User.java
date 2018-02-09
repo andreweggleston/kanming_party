@@ -66,8 +66,6 @@ public class User extends Drawable{
     }
 
     public void setBoardLoc(int x, int y){
-        System.out.println("X: " + x);
-        System.out.println("Y: " + y);
         boardLocationX = x;
         boardLocationY = y;
     }

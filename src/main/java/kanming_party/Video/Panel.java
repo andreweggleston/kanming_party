@@ -373,9 +373,9 @@ public class Panel extends JPanel {
 
 
                     if (game.getTurnStage() == GameConstants.TURNSTAGE_MOVEMENT) {
-                        if (currentTile.isTwoWay() && moves != 0 && game.getTurnStage() != GameConstants.TURNSTAGE_MOVEPICK) {
+                        if (currentTile.isTwoWay() && moves != 0 && game.getTurnStage() != GameConstants.TURNSTAGE_MOVEPICK && moves != rollDice.getRoll()) {
                             game.setTurnStage(GameConstants.TURNSTAGE_MOVEPICK);
-                            if (directionPopup.isHidden()) directionPopup.toggleHide();
+                            if (directionPopup.isHidden() && !directionPopup.isClicked()) directionPopup.toggleHide();
                             ArrayList<Integer> ints = new ArrayList<>();
                             for (int i = 0; i < currentTile.getDirections().length; i++) {
                                 if (currentTile.getDirections()[i]) {
@@ -404,22 +404,27 @@ public class Panel extends JPanel {
 
                         directionPopup.checkCollision(mouseX, mouseY);
                         directionPopup.draw(g2);
-                        if (directionPopup.isHidden()) {
+                        if (directionPopup.isClicked()) {
                             switch (directionPopup.getOptions()[selectedPopupOption]) {
                                 case "Up":
                                     game.setCurrentPlayerDirection(GameConstants.DIR_UP);
+                                    System.out.println("Dir UP");
                                     break;
                                 case "Right":
                                     game.setCurrentPlayerDirection(GameConstants.DIR_RIGHT);
+                                    System.out.println("Dir RIGHT");
                                     break;
                                 case "Down":
                                     game.setCurrentPlayerDirection(GameConstants.DIR_DOWN);
+                                    System.out.println("Dir DOWN");
                                     break;
                                 case "Left":
                                     game.setCurrentPlayerDirection(GameConstants.DIR_LEFT);
+                                    System.out.println("Dir LEFT");
                                     break;
                             }
                             game.setTurnStage(GameConstants.TURNSTAGE_MOVEMENT);
+                            directionPopup.toggleHide();
                         }
                     } else {
                         for (int i = 0; i < currentTile.getDirections().length; i++) {
