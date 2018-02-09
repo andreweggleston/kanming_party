@@ -118,19 +118,19 @@ public class User extends Drawable{
     private void setAvatar(String spriteName) throws IOException{
         switch (spriteName){
             case "dubstepper":
-                avatar = ImageIO.read(new File("/Users/student/IdeaProjects/kanming_party/target/classes/personas/Super-Groovy-Dank-Dubstepper.png"));
+                avatar = ImageIO.read(new File("src/main/resources/personas/Super-Groovy-Dank-Dubstepper.png"));
                 break;
             case "cool":
-                avatar = ImageIO.read(new File("/Users/student/IdeaProjects/kanming_party/target/classes/personas/Super-Cool-Guy.png"));
+                avatar = ImageIO.read(new File("src/main/resources/personas/Super-Cool-Guy.png"));
                 break;
             case "goodlooking":
-                avatar = ImageIO.read(new File("/Users/student/IdeaProjects/kanming_party/target/classes/personas/Super-Good-Looking-Guy.png"));
+                avatar = ImageIO.read(new File("src/main/resources/personas/Super-Good-Looking-Guy.png"));
                 break;
             case "nice":
-                avatar = ImageIO.read(new File("/Users/student/IdeaProjects/kanming_party/target/classes/personas/Super-Nice-Guy.png"));
+                avatar = ImageIO.read(new File("src/main/resources/personas/Super-Nice-Guy.png"));
                 break;
             case "smart":
-                avatar = ImageIO.read(new File("/Users/student/IdeaProjects/kanming_party/target/classes/personas/Super-Smart-Guy.png"));
+                avatar = ImageIO.read(new File("src/main/resources/personas/Super-Smart-Guy.png"));
                 break;
         }
     }
