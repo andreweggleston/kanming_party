@@ -15,7 +15,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 public class Panel extends JPanel {
 
@@ -347,9 +346,12 @@ public class Panel extends JPanel {
                         game.getGameBoard()[i][j].draw(g2, getWidth(), getHeight());
                     }
                 }
+                for (User user: game.getUsers()) {
+                    user.draw(g2);
+                }
 
 
-                game.getPlayers().forEach(player -> player.draw(g2, getWidth(), getHeight()));
+                game.getUsers().forEach(player -> player.draw(g2, getWidth(), getHeight()));
 
 
                 if (game.getCurrentPlayer().isAlive()) {

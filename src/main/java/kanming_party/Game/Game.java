@@ -81,11 +81,6 @@ public class Game {
                 JSONArray jsonDirections = (JSONArray) jsonTile.get("directions");
 
                 for (int k = 0; k < jsonDirections.size(); k++) {
-
-//                    if ((boolean)jsonDirections.get(k)){
-//                        directions[k] = true;
-//                    }else directions[k] = false;
-
                     directions[k] = (boolean) jsonDirections.get(k);
                 }
 
@@ -116,8 +111,6 @@ public class Game {
 
     }
 
-
-
     public Tile[][] getGameBoard() {
         return gameBoard;
     }
@@ -126,7 +119,7 @@ public class Game {
         direction = dir;
     }
 
-    public ArrayList<User> getPlayers() {
+    public ArrayList<User> getUsers() {
         return users;
     }
 
