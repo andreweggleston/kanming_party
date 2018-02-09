@@ -375,9 +375,15 @@ public class Panel extends JPanel {
 
 
                     if (game.getTurnStage() == GameConstants.TURNSTAGE_MOVEMENT) {
-                        if (currentTile.isTwoWay() && moves != 0 && game.getTurnStage() != GameConstants.TURNSTAGE_MOVEPICK && moves != rollDice.getRoll()) {
+                        if (currentTile.isTwoWay() && moves != 0 && game.getTurnStage() != GameConstants.TURNSTAGE_MOVEPICK) {
+
                             game.setTurnStage(GameConstants.TURNSTAGE_MOVEPICK);
-                            if (directionPopup.isHidden() && !directionPopup.isClicked()) directionPopup.toggleHide();
+
+                            if (directionPopup.isHidden() && !directionPopup.isClicked())
+                                directionPopup.toggleHide();
+
+
+
                             ArrayList<Integer> ints = new ArrayList<>();
                             for (int i = 0; i < currentTile.getDirections().length; i++) {
                                 if (currentTile.getDirections()[i]) {
@@ -406,7 +412,7 @@ public class Panel extends JPanel {
 
                         directionPopup.checkCollision(mouseX, mouseY);
                         directionPopup.draw(g2);
-                        if (directionPopup.isClicked()) {
+                        if (directionPopup.isClicked() && rollDice.getRoll() != moves) {
                             switch (directionPopup.getOptions()[selectedPopupOption]) {
                                 case "Up":
                                     game.setCurrentPlayerDirection(GameConstants.DIR_UP);
@@ -448,6 +454,7 @@ public class Panel extends JPanel {
                         } else if (directionPopup.isHidden()) {
                             game.setTurnStage(GameConstants.TURNSTAGE_MOVEROLL);
                             rollDice.reset();
+                            directionPopup.reset();
                             rollFrameCounter = 64;
                         }
                     }
