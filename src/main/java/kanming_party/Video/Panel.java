@@ -445,6 +445,10 @@ public class Panel extends JPanel {
 
                     if (game.getTurnStage() == GameConstants.TURNSTAGE_MOVEMENT) {
                         if (moves != 0) {
+                            Font oldFont = g2.getFont();
+                            g2.setFont(new Font(g2.getFont().getFontName(), g2.getFont().getStyle(), 25));
+                            g2.drawString("Moves left: " + moves, 20, 30);
+                            g2.setFont(oldFont);
                             if (moveFrameCounter == 0) {
                                 game.moveCurrentPlayer();
                                 moves--;
