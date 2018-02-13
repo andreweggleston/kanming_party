@@ -396,13 +396,13 @@ public class Panel extends JPanel {
                                         directionPopup.setOption("Up", i);
                                         break;
                                     case GameConstants.DIR_RIGHT:
-                                        directionPopup.setOption("Right", i);
+                                        directionPopup.setOption("Left", i);
                                         break;
                                     case GameConstants.DIR_DOWN:
                                         directionPopup.setOption("Down", i);
                                         break;
                                     case GameConstants.DIR_LEFT:
-                                        directionPopup.setOption("Left", i);
+                                        directionPopup.setOption("Right", i);
                                         break;
                                 }
                             }
