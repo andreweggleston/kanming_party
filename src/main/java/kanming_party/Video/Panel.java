@@ -265,35 +265,40 @@ public class Panel extends JPanel {
 
         g2.setFont(new Font("Beirut", Font.PLAIN, 40));
 
+
         if (isLoaded()) {
 
-            if (screen == ScreenConstants.MAIN_MENU) {
-                joinButton.checkCollision(mouseX, mouseY);
-                joinButton.draw(g2);
 
-                hostButton.checkCollision(mouseX, mouseY);
-                hostButton.draw(g2);
-
-                quitButton.checkCollision(mouseX, mouseY);
-                quitButton.draw(g2);
-
-                testPopupButton.checkCollision(mouseX, mouseY);
-                testPopupButton.draw(g2);
-
-                boardCreatorButton.checkCollision(mouseX, mouseY);
-                boardCreatorButton.draw(g2);
-
-                testRoll.checkCollision(mouseX, mouseY);
-                testRoll.draw(g2);
-
-            } else if (screen != ScreenConstants.GAME) {
+            if (screen != ScreenConstants.GAME && screen != ScreenConstants.MAIN_MENU) {
                 backButton.checkCollision(mouseX, mouseY);
                 backButton.draw(g2);
+            }
 
-                if (screen == ScreenConstants.TEST) {
+            switch (screen) {
+                case ScreenConstants.MAIN_MENU:
+                    joinButton.checkCollision(mouseX, mouseY);
+                    joinButton.draw(g2);
+
+                    hostButton.checkCollision(mouseX, mouseY);
+                    hostButton.draw(g2);
+
+                    quitButton.checkCollision(mouseX, mouseY);
+                    quitButton.draw(g2);
+
+                    testPopupButton.checkCollision(mouseX, mouseY);
+                    testPopupButton.draw(g2);
+
+                    boardCreatorButton.checkCollision(mouseX, mouseY);
+                    boardCreatorButton.draw(g2);
+
+                    testRoll.checkCollision(mouseX, mouseY);
+                    testRoll.draw(g2);
+                    break;
+                case ScreenConstants.TEST:
                     goalPopup.checkCollision(mouseX, mouseY);
                     goalPopup.draw(g2);
-                } else if (screen == ScreenConstants.BOARDCREATOR) {
+                    break;
+                case ScreenConstants.BOARDCREATOR:
                     g2.drawString("F: Empty  tile", getWidth() / 20, getHeight() / 20 * 19);
                     g2.clearRect(getWidth() / 40 * 7, getHeight() / 20 * 19 - 15, 15, 15);
 
@@ -330,144 +335,350 @@ public class Panel extends JPanel {
 
                     boardClearButton.checkCollision(mouseX, mouseY);
                     boardClearButton.draw(g2);
-                } else if (screen == ScreenConstants.TESTROLL) {
+                    break;
+                case ScreenConstants.TESTROLL:
                     rollDice.checkCollision(mouseX, mouseY);
                     rollDice.draw(g2);
-                } else if (screen == ScreenConstants.JOIN) {
-
-                }
-            } else { //player is in game!!
-
-
-                //code here for what happens in game; draw board
-
-                for (int i = 0; i < game.getGameBoard().length; i++) {
-                    for (int j = 0; j < game.getGameBoard()[0].length; j++) {
-                        game.getGameBoard()[i][j].draw(g2, getWidth(), getHeight());
-                    }
-                }
-                for (User user: game.getUsers()) {
-                    user.draw(g2);
-                }
-
-
-                game.getUsers().forEach(player -> player.draw(g2, getWidth(), getHeight()));
-
-
-                if (game.getCurrentPlayer().isAlive()) {
-                    rollDice.checkCollision(mouseX, mouseY);
-                    rollDice.draw(g2);
-                    if (game.getTurnStage() == GameConstants.TURNSTAGE_MOVEROLL) {
-                        if (rollFrameCounter != 0) {
-                            if (rollDice.isHidden()) rollDice.toggleHide();
-                            rollDice.draw(g2);
-                            if (rollDice.isRolled())
-                                rollFrameCounter--;
-                        } else {
-                            rollDice.toggleHide();
-                            moves = rollDice.getRoll();
-
-                            game.setTurnStage(GameConstants.TURNSTAGE_MOVEMENT);
+                    break;
+                case ScreenConstants.GAME:
+                    for (int i = 0; i < game.getGameBoard().length; i++) {
+                        for (int j = 0; j < game.getGameBoard()[0].length; j++) {
+                            game.getGameBoard()[i][j].draw(g2, getWidth(), getHeight());
                         }
                     }
+                    game.getUsers().forEach(player -> player.draw(g2, getWidth(), getHeight()));
 
-                    Tile currentTile = game.getGameBoard()[game.getCurrentPlayer().getBoardLoc().X()][game.getCurrentPlayer().getBoardLoc().Y()];
+                    if (game.getCurrentPlayer().isAlive()) {
 
+                        switch (game.getTurnStage()) {
+                            case GameConstants.TURNSTAGE_MOVEROLL:
+                                if (rollFrameCounter != 0) {
+                                    if (rollDice.isHidden()) rollDice.toggleHide();
+                                    rollDice.checkCollision(mouseX, mouseY);
+                                    rollDice.draw(g2);
+                                    if (rollDice.isRolled())
+                                        rollFrameCounter--;
+                                } else {
+                                    rollDice.toggleHide();
+                                    moves = rollDice.getRoll();
 
-                    if (game.getTurnStage() == GameConstants.TURNSTAGE_MOVEMENT) {
-                        if (currentTile.isTwoWay() && moves != 0 && game.getTurnStage() != GameConstants.TURNSTAGE_MOVEPICK) {
-
-                            game.setTurnStage(GameConstants.TURNSTAGE_MOVEPICK);
-
-                            if (directionPopup.isHidden() && !directionPopup.isClicked())
-                                directionPopup.toggleHide();
-
-
-
-                            ArrayList<Integer> ints = new ArrayList<>();
-                            for (int i = 0; i < currentTile.getDirections().length; i++) {
-                                if (currentTile.getDirections()[i]) {
-                                    ints.add(i);
+                                    game.setTurnStage(GameConstants.TURNSTAGE_MOVEMENT);
                                 }
-                            }
-                            for (int i = 0; i < ints.size(); i++) {
-                                switch (ints.get(i)) {
-                                    case GameConstants.DIR_UP:
-                                        directionPopup.setOption("Up", i);
-                                        break;
-                                    case GameConstants.DIR_RIGHT:
-                                        directionPopup.setOption("Left", i);
-                                        break;
-                                    case GameConstants.DIR_DOWN:
-                                        directionPopup.setOption("Down", i);
-                                        break;
-                                    case GameConstants.DIR_LEFT:
-                                        directionPopup.setOption("Right", i);
-                                        break;
+                                break;
+                            case GameConstants.TURNSTAGE_MOVEMENT:
+                                Tile currentTile = game.getGameBoard()[game.getCurrentPlayer().getBoardLoc().X()][game.getCurrentPlayer().getBoardLoc().Y()];
+
+                                if (currentTile.isTwoWay() && moves != 0) {
+
+                                    if (!directionPopup.isClicked()) {
+
+                                        ArrayList<Integer> ints = new ArrayList<>();
+                                        for (int i = 0; i < currentTile.getDirections().length; i++) {
+                                            if (currentTile.getDirections()[i]) {
+                                                ints.add(i);
+                                            }
+                                        }
+                                        for (int i = 0; i < ints.size(); i++) {
+                                            switch (ints.get(i)) {
+                                                case GameConstants.DIR_UP:
+                                                    directionPopup.setOption("Up", i);
+                                                    break;
+                                                case GameConstants.DIR_RIGHT:
+                                                    directionPopup.setOption("Left", i);
+                                                    break;
+                                                case GameConstants.DIR_DOWN:
+                                                    directionPopup.setOption("Down", i);
+                                                    break;
+                                                case GameConstants.DIR_LEFT:
+                                                    directionPopup.setOption("Right", i);
+                                                    break;
+                                            }
+                                        }
+
+                                        if (directionPopup.isHidden()) {
+                                            directionPopup.toggleHide();
+                                        }
+
+                                        directionPopup.checkCollision(mouseX, mouseY);
+                                        directionPopup.draw(g2);
+
+                                        game.setTurnStage(GameConstants.TURNSTAGE_MOVEPICK);
+
+
+                                    }else {
+                                        switch (directionPopup.getOptions()[selectedPopupOption]) {
+                                            case "Up":
+                                                game.setCurrentPlayerDirection(GameConstants.DIR_UP);
+                                                break;
+                                            case "Right":
+                                                game.setCurrentPlayerDirection(GameConstants.DIR_RIGHT);
+                                                break;
+                                            case "Down":
+                                                game.setCurrentPlayerDirection(GameConstants.DIR_DOWN);
+                                                break;
+                                            case "Left":
+                                                game.setCurrentPlayerDirection(GameConstants.DIR_LEFT);
+                                                break;
+                                        }
+                                    }
+
+
+
+                                } else {
+                                    for (int i = 0; i < currentTile.getDirections().length; i++) {
+                                        if (currentTile.getDirections()[i]) {
+                                            game.setCurrentPlayerDirection(i);
+                                        }
+                                    }
                                 }
-                            }
+
+                                if (!currentTile.isTwoWay() || (currentTile.isTwoWay() && directionPopup.isClicked())){
+                                    if (moves != 0) {
+                                        if (moveFrameCounter == 0) {
+                                            game.moveCurrentPlayer();
+                                            moves--;
+                                            moveFrameCounter = 12;
+                                        }
+                                        moveFrameCounter--;
+                                    }
+                                }
+
+                                break;
+                            case GameConstants.TURNSTAGE_MOVEPICK:
+                                directionPopup.checkCollision(mouseX, mouseY);
+                                directionPopup.draw(g2);
+
+                                if (directionPopup.isClicked()) {
+                                    switch (directionPopup.getOptions()[selectedPopupOption]) {
+                                        case "Up":
+                                            game.setCurrentPlayerDirection(GameConstants.DIR_UP);
+                                            System.out.println("Dir UP");
+                                            break;
+                                        case "Right":
+                                            game.setCurrentPlayerDirection(GameConstants.DIR_RIGHT);
+                                            System.out.println("Dir RIGHT");
+                                            break;
+                                        case "Down":
+                                            game.setCurrentPlayerDirection(GameConstants.DIR_DOWN);
+                                            System.out.println("Dir DOWN");
+                                            break;
+                                        case "Left":
+                                            game.setCurrentPlayerDirection(GameConstants.DIR_LEFT);
+                                            System.out.println("Dir LEFT");
+                                            break;
+                                    }
+                                    game.setTurnStage(GameConstants.TURNSTAGE_MOVEMENT);
+                                    directionPopup.toggleHide();
+                                }
+                                break;
+
                         }
+
+
+                    } else { //player is dead
+
                     }
-                    if (game.getTurnStage() == GameConstants.TURNSTAGE_MOVEPICK) {
-
-                        directionPopup.checkCollision(mouseX, mouseY);
-                        directionPopup.draw(g2);
-                        if (directionPopup.isClicked() && rollDice.getRoll() != moves) {
-                            switch (directionPopup.getOptions()[selectedPopupOption]) {
-                                case "Up":
-                                    game.setCurrentPlayerDirection(GameConstants.DIR_UP);
-                                    System.out.println("Dir UP");
-                                    break;
-                                case "Right":
-                                    game.setCurrentPlayerDirection(GameConstants.DIR_RIGHT);
-                                    System.out.println("Dir RIGHT");
-                                    break;
-                                case "Down":
-                                    game.setCurrentPlayerDirection(GameConstants.DIR_DOWN);
-                                    System.out.println("Dir DOWN");
-                                    break;
-                                case "Left":
-                                    game.setCurrentPlayerDirection(GameConstants.DIR_LEFT);
-                                    System.out.println("Dir LEFT");
-                                    break;
-                            }
-                            game.setTurnStage(GameConstants.TURNSTAGE_MOVEMENT);
-                            directionPopup.toggleHide();
-                        }
-                    } else {
-                        for (int i = 0; i < currentTile.getDirections().length; i++) {
-                            if (currentTile.getDirections()[i]) {
-                                game.setCurrentPlayerDirection(i);
-                            }
-                        }
-                    }
-
-
-                    if (game.getTurnStage() == GameConstants.TURNSTAGE_MOVEMENT) {
-                        if (moves != 0) {
-                            Font oldFont = g2.getFont();
-                            g2.setFont(new Font(g2.getFont().getFontName(), g2.getFont().getStyle(), 25));
-                            g2.drawString("Moves left: " + moves, 20, 30);
-                            g2.setFont(oldFont);
-                            if (moveFrameCounter == 0) {
-                                game.moveCurrentPlayer();
-                                moves--;
-                                moveFrameCounter = 12;
-                            }
-                            moveFrameCounter--;
-                        } else if (directionPopup.isHidden()) {
-                            game.setTurnStage(GameConstants.TURNSTAGE_MOVEROLL);
-                            rollDice.reset();
-                            directionPopup.reset();
-                            rollFrameCounter = 64;
-                        }
-                    }
-
-
-                }
-
 
             }
+
+
+//            if (screen == ScreenConstants.MAIN_MENU) {
+//                joinButton.checkCollision(mouseX, mouseY);
+//                joinButton.draw(g2);
+//
+//                hostButton.checkCollision(mouseX, mouseY);
+//                hostButton.draw(g2);
+//
+//                quitButton.checkCollision(mouseX, mouseY);
+//                quitButton.draw(g2);
+//
+//                testPopupButton.checkCollision(mouseX, mouseY);
+//                testPopupButton.draw(g2);
+//
+//                boardCreatorButton.checkCollision(mouseX, mouseY);
+//                boardCreatorButton.draw(g2);
+//
+//                testRoll.checkCollision(mouseX, mouseY);
+//                testRoll.draw(g2);
+//
+//            } else if (screen != ScreenConstants.GAME) {
+//                backButton.checkCollision(mouseX, mouseY);
+//                backButton.draw(g2);
+//
+//                if (screen == ScreenConstants.TEST) {
+//                    goalPopup.checkCollision(mouseX, mouseY);
+//                    goalPopup.draw(g2);
+//                } else if (screen == ScreenConstants.BOARDCREATOR) {
+//                    g2.drawString("F: Empty  tile", getWidth() / 20, getHeight() / 20 * 19);
+//                    g2.clearRect(getWidth() / 40 * 7, getHeight() / 20 * 19 - 15, 15, 15);
+//
+//                    g2.drawString("D: Drop  tile", getWidth() / 20, getHeight() / 20 * 18);
+//                    g2.setColor(Color.BLUE);
+//                    g2.fillRect(getWidth() / 40 * 7, getHeight() / 20 * 18 - 15, 15, 15);
+//                    g2.setColor(Color.BLACK);
+//
+//                    g2.drawString("S: Star  tile", getWidth() / 20, getHeight() / 20 * 17);
+//                    g2.setColor(Color.YELLOW);
+//                    g2.fillRect(getWidth() / 40 * 7, getHeight() / 20 * 17 - 15, 15, 15);
+//                    g2.setColor(Color.BLACK);
+//
+//                    g2.drawString("B: Battle  tile", getWidth() / 20, getHeight() / 20 * 16);
+//                    g2.setColor(Color.RED);
+//                    g2.fillRect(getWidth() / 40 * 7, getHeight() / 20 * 16 - 15, 15, 15);
+//                    g2.setColor(Color.BLACK);
+//
+//                    g2.drawString("M: Minigame  tile", getWidth() / 20, getHeight() / 20 * 15);
+//                    g2.setColor(Color.ORANGE);
+//                    g2.fillRect(getWidth() / 40 * 7, getHeight() / 20 * 15 - 15, 15, 15);
+//                    g2.setColor(Color.BLACK);
+//
+//                    g2.drawString("H: Home  tile", getWidth() / 20, getHeight() / 20 * 14);
+//                    g2.setColor(Color.PINK);
+//                    g2.fillRect(getWidth() / 40 * 7, getHeight() / 20 * 14 - 15, 15, 15);
+//                    g2.setColor(Color.BLACK);
+//
+//                    for (int x = 0; x < boardCreatorBoxes.length; x++) {
+//                        for (int y = 0; y < boardCreatorBoxes[0].length; y++) {
+//                            boardCreatorBoxes[x][y].draw(g2);
+//                        }
+//                    }
+//
+//                    boardClearButton.checkCollision(mouseX, mouseY);
+//                    boardClearButton.draw(g2);
+//                } else if (screen == ScreenConstants.TESTROLL) {
+//                    rollDice.checkCollision(mouseX, mouseY);
+//                    rollDice.draw(g2);
+//                } else if (screen == ScreenConstants.JOIN) {
+//
+//                }
+//            } else { //player is in game!!
+//
+//
+//                //code here for what happens in game; draw board
+//
+//                for (int i = 0; i < game.getGameBoard().length; i++) {
+//                    for (int j = 0; j < game.getGameBoard()[0].length; j++) {
+//                        game.getGameBoard()[i][j].draw(g2, getWidth(), getHeight());
+//                    }
+//                }
+//                for (User user : game.getUsers()) {
+//                    user.draw(g2);
+//                }
+//
+//
+//                game.getUsers().forEach(player -> player.draw(g2, getWidth(), getHeight()));
+//
+//
+//                if (game.getCurrentPlayer().isAlive()) {
+//                    if (game.getTurnStage() == GameConstants.TURNSTAGE_MOVEROLL) {
+//                        if (rollFrameCounter != 0) {
+//                            if (rollDice.isHidden()) rollDice.toggleHide();
+//                            rollDice.checkCollision(mouseX, mouseY);
+//                            rollDice.draw(g2);
+//                            if (rollDice.isRolled())
+//                                rollFrameCounter--;
+//                        } else {
+//                            rollDice.toggleHide();
+//                            moves = rollDice.getRoll();
+//
+//                            game.setTurnStage(GameConstants.TURNSTAGE_MOVEMENT);
+//                        }
+//                    }
+//
+//                    Tile currentTile = game.getGameBoard()[game.getCurrentPlayer().getBoardLoc().X()][game.getCurrentPlayer().getBoardLoc().Y()];
+//
+//
+//                    if (game.getTurnStage() == GameConstants.TURNSTAGE_MOVEMENT) {
+//                        if (currentTile.isTwoWay() && moves != 0) {
+//
+//                            game.setTurnStage(GameConstants.TURNSTAGE_MOVEPICK);
+//
+//                            if (directionPopup.isHidden() && !directionPopup.isClicked())
+//                                directionPopup.toggleHide();
+//
+//
+//                            ArrayList<Integer> ints = new ArrayList<>();
+//                            for (int i = 0; i < currentTile.getDirections().length; i++) {
+//                                if (currentTile.getDirections()[i]) {
+//                                    ints.add(i);
+//                                }
+//                            }
+//                            for (int i = ints.size()-1; i > 0; i--) {
+//                                switch (ints.get(i)) {
+//                                    case GameConstants.DIR_UP:
+//                                        directionPopup.setOption("Up", i);
+//                                        break;
+//                                    case GameConstants.DIR_RIGHT:
+//                                        directionPopup.setOption("Right", i);
+//                                        break;
+//                                    case GameConstants.DIR_DOWN:
+//                                        directionPopup.setOption("Down", i);
+//                                        break;
+//                                    case GameConstants.DIR_LEFT:
+//                                        directionPopup.setOption("Left", i);
+//                                        break;
+//                                }
+//                            }
+//                        }
+//                    }
+//                    if (game.getTurnStage() == GameConstants.TURNSTAGE_MOVEPICK) {
+//
+//                        directionPopup.checkCollision(mouseX, mouseY);
+//                        directionPopup.draw(g2);
+//
+//
+//                        if (directionPopup.isClicked()) {
+//                            switch (directionPopup.getOptions()[selectedPopupOption]) {
+//                                case "Up":
+//                                    game.setCurrentPlayerDirection(GameConstants.DIR_UP);
+//                                    System.out.println("Dir UP");
+//                                    break;
+//                                case "Right":
+//                                    game.setCurrentPlayerDirection(GameConstants.DIR_RIGHT);
+//                                    System.out.println("Dir RIGHT");
+//                                    break;
+//                                case "Down":
+//                                    game.setCurrentPlayerDirection(GameConstants.DIR_DOWN);
+//                                    System.out.println("Dir DOWN");
+//                                    break;
+//                                case "Left":
+//                                    game.setCurrentPlayerDirection(GameConstants.DIR_LEFT);
+//                                    System.out.println("Dir LEFT");
+//                                    break;
+//                            }
+//                            game.setTurnStage(GameConstants.TURNSTAGE_MOVEMENT);
+//                            directionPopup.toggleHide();
+//                        }
+//                    } else {
+//                        for (int i = 0; i < currentTile.getDirections().length; i++) {
+//                            if (currentTile.getDirections()[i]) {
+//                                game.setCurrentPlayerDirection(i);
+//                            }
+//                        }
+//                    }
+//
+//
+//                    if (game.getTurnStage() == GameConstants.TURNSTAGE_MOVEMENT) {
+//                        if (moves != 0) {
+//                            if (moveFrameCounter == 0) {
+//                                game.moveCurrentPlayer();
+//                                moves--;
+//                                moveFrameCounter = 12;
+//                            }
+//                            moveFrameCounter--;
+//                        } else if (directionPopup.isHidden()) {
+//                            game.setTurnStage(GameConstants.TURNSTAGE_MOVEROLL);
+//                            rollDice.reset();
+//                            directionPopup.reset();
+//                            rollFrameCounter = 64;
+//                        }
+//                    }
+//
+//
+//                }
+//
+//
+//            }
 
 
         }
