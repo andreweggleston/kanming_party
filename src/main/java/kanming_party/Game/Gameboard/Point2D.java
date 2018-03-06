@@ -19,4 +19,9 @@ public class Point2D {
     public int Y(){
         return y;
     }
+
+    @Override
+    public String toString() {
+        return "Point2D: " + x + ", " + y;
+    }
 }

@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Kanming_Party.iml" filepath="$PROJECT_DIR$/Kanming_Party.iml" />
       <module fileurl="file://$PROJECT_DIR$/kanming_part.iml" filepath="$PROJECT_DIR$/kanming_part.iml" />
     </modules>
   </component>

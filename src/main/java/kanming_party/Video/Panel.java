@@ -3,6 +3,7 @@ package kanming_party.Video;
 import kanming_party.Game.Game;
 import kanming_party.Game.GameConstants;
 
+import kanming_party.Game.Gameboard.Point2D;
 import kanming_party.Game.Gameboard.Tile;
 import kanming_party.User.User;
 import org.json.simple.JSONArray;
@@ -42,6 +43,8 @@ public class Panel extends JPanel {
     private Popup directionPopup;
 
     private Dice rollDice;
+
+    private Point2D clickedTwoWayTileLocation;
 
     private int mouseX, mouseY;
 
@@ -214,10 +217,18 @@ public class Panel extends JPanel {
 
                     if (directionPopup.checkCollisionOption1(mouseX, mouseY)) {
                         directionPopup.toggleHide();
+                        clickedTwoWayTileLocation = game.getCurrentPlayer().getBoardLoc();
+
+                        System.out.println(clickedTwoWayTileLocation);
+
                         game.setTurnStage(GameConstants.TURNSTAGE_MOVEMENT);
                         selectedPopupOption = 0;
                     } else if (directionPopup.checkCollisionOption2(mouseX, mouseY)) {
                         directionPopup.toggleHide();
+                        clickedTwoWayTileLocation = game.getCurrentPlayer().getBoardLoc();
+
+                        System.out.println(clickedTwoWayTileLocation);
+
                         game.setTurnStage(GameConstants.TURNSTAGE_MOVEMENT);
                         selectedPopupOption = 1;
                     }
@@ -339,6 +350,9 @@ public class Panel extends JPanel {
             } else { //player is in game!!
 
 
+
+
+
                 //code here for what happens in game; draw board
 
                 for (int i = 0; i < game.getGameBoard().length; i++) {
@@ -346,7 +360,7 @@ public class Panel extends JPanel {
                         game.getGameBoard()[i][j].draw(g2, getWidth(), getHeight());
                     }
                 }
-                for (User user: game.getUsers()) {
+                for (User user : game.getUsers()) {
                     user.draw(g2);
                 }
 
@@ -381,7 +395,6 @@ public class Panel extends JPanel {
 
                             if (directionPopup.isHidden() && !directionPopup.isClicked())
                                 directionPopup.toggleHide();
-
 
 
                             ArrayList<Integer> ints = new ArrayList<>();
@@ -432,7 +445,8 @@ public class Panel extends JPanel {
                                     break;
                             }
                             game.setTurnStage(GameConstants.TURNSTAGE_MOVEMENT);
-                            directionPopup.toggleHide();
+                            if (clickedTwoWayTileLocation.X() != game.getCurrentPlayer().getBoardLoc().X() && clickedTwoWayTileLocation.Y() != game.getCurrentPlayer().getBoardLoc().Y())
+                                directionPopup.toggleHide();
                         }
                     } else {
                         for (int i = 0; i < currentTile.getDirections().length; i++) {
@@ -458,14 +472,25 @@ public class Panel extends JPanel {
                         } else if (directionPopup.isHidden()) {
                             game.setTurnStage(GameConstants.TURNSTAGE_MOVEROLL);
                             rollDice.reset();
-                            directionPopup.reset();
+                            System.out.println(clickedTwoWayTileLocation);
+                            System.out.println("Game loc: " + game.getCurrentPlayer().getBoardLoc());
+                            if (clickedTwoWayTileLocation != null) {
+                                if (clickedTwoWayTileLocation.X() != game.getCurrentPlayer().getBoardLoc().X() && clickedTwoWayTileLocation.Y() != game.getCurrentPlayer().getBoardLoc().Y()) {
+                                    directionPopup.reset();
+                                }
+
+                            }
                             rollFrameCounter = 64;
                         }
                     }
 
 
                 }
-
+                Font oldFont = g2.getFont();
+                g2.setFont(new Font(g2.getFont().getFontName(), g2.getFont().getStyle(), 25));
+                g2.drawString("Clicked twoway loc: " + clickedTwoWayTileLocation, 20, getHeight()/2);
+                g2.drawString("current player loc: " + game.getCurrentPlayer().getBoardLoc().toString(), 20, getHeight()/2 + 20);
+                g2.setFont(oldFont);
 
             }
 
