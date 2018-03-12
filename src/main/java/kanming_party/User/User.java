@@ -135,9 +135,22 @@ public class User extends Drawable{
         }
     }
 
+    public boolean isGoalComplete(){
+        if (goalType == GameConstants.GOAL_STARS){
+            if(stars>=currentGoal){
+                return true;
+            }
+        }else if (wins>=currentGoal){
+            return true;
+        }
+        return false;
+    }
 
     public boolean isAlive(){
         return isAlive;
     }
 
+    public int remStars(int stars) {
+        return this.stars -= stars;
+    }
 }

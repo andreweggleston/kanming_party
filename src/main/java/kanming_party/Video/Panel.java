@@ -16,6 +16,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 public class Panel extends JPanel {
 
@@ -43,6 +44,10 @@ public class Panel extends JPanel {
     private Popup directionPopup;
 
     private Dice rollDice;
+    private Dice rollStar;
+    private Dice rollDrop;
+
+    private Button battleButton;
 
     private Point2D clickedTwoWayTileLocation;
 
@@ -58,6 +63,8 @@ public class Panel extends JPanel {
 
     private int moveFrameCounter = 0;
     private int moves;
+
+    private int starMultiple;
 
     private int rollFrameCounter = 64;
 
@@ -212,7 +219,18 @@ public class Panel extends JPanel {
 
                     if (rollDice.checkCollision(mouseX, mouseY)) {
                         rollDice.roll();
+                    }
 
+                    if (rollStar.checkCollision(mouseX, mouseY)) {
+                        rollStar.roll();
+                    }
+
+                    if (rollDrop.checkCollision(mouseX, mouseY)){
+                        rollDrop.roll();
+                    }
+
+                    if (battleButton.checkCollision(mouseX, mouseY)){
+                        battleButton.toggleHide();
                     }
 
                     if (directionPopup.checkCollisionOption1(mouseX, mouseY)) {
@@ -350,9 +368,6 @@ public class Panel extends JPanel {
             } else { //player is in game!!
 
 
-
-
-
                 //code here for what happens in game; draw board
 
                 for (int i = 0; i < game.getGameBoard().length; i++) {
@@ -425,7 +440,7 @@ public class Panel extends JPanel {
 
                         directionPopup.checkCollision(mouseX, mouseY);
                         directionPopup.draw(g2);
-                        if (directionPopup.isClicked() && rollDice.getRoll() != moves) {
+                        if (directionPopup.isClicked() /* && rollDice.getRoll() != moves*/) {
                             switch (directionPopup.getOptions()[selectedPopupOption]) {
                                 case "Up":
                                     game.setCurrentPlayerDirection(GameConstants.DIR_UP);
@@ -470,17 +485,83 @@ public class Panel extends JPanel {
                             }
                             moveFrameCounter--;
                         } else if (directionPopup.isHidden()) {
-                            game.setTurnStage(GameConstants.TURNSTAGE_MOVEROLL);
-                            rollDice.reset();
-                            System.out.println(clickedTwoWayTileLocation);
-                            System.out.println("Game loc: " + game.getCurrentPlayer().getBoardLoc());
-                            if (clickedTwoWayTileLocation != null) {
-                                if (clickedTwoWayTileLocation.X() != game.getCurrentPlayer().getBoardLoc().X() && clickedTwoWayTileLocation.Y() != game.getCurrentPlayer().getBoardLoc().Y()) {
-                                    directionPopup.reset();
-                                }
 
+                            game.getUsers().forEach(user -> {
+                                if (user.getId() != game.getCurrentPlayer().getId() && user.getBoardLoc().equals(game.getCurrentPlayer().getBoardLoc()))
+                                    game.setTurnStage(GameConstants.TURNSTAGE_BATTLEPICK);
+                            });
+
+                            switch (currentTile.getType()) {
+                                case GameConstants.TILE_STAR:
+                                    rollFrameCounter = 64;
+                                    game.setTurnStage(GameConstants.TURNSTAGE_STARROLL);
+                                    break;
+                                case GameConstants.TILE_DROP:
+                                    game.setTurnStage(GameConstants.TURNSTAGE_DROPROLL);
+                                    break;
+                                case GameConstants.TILE_HOME:
+                                    if (game.getCurrentPlayer().isGoalComplete())
+                                        game.setTurnStage(GameConstants.TURNSTAGE_GOALPICK);
+                                    break;
+                                case GameConstants.TILE_BATTLE:
+                                    game.setTurnStage(GameConstants.TURNSTAGE_BATTLE);
+                                    break;
                             }
-                            rollFrameCounter = 64;
+
+
+                        }
+                    }
+                    if (game.getTurnStage() == GameConstants.TURNSTAGE_STARROLL) {
+                        rollStar.checkCollision(mouseX, mouseY);
+
+                        if (rollFrameCounter != 0) {
+                            if (rollStar.isHidden()) rollStar.toggleHide();
+                            rollDrop.draw(g2);
+                            if (rollStar.isRolled())
+                                rollFrameCounter--;
+                        } else {
+                            rollStar.toggleHide();
+                            starMultiple = rollStar.getRoll();
+
+                            if (game.getChapter() < 5) {
+                                game.getCurrentPlayer().addStars(starMultiple);
+                            } else if (game.getChapter() > 5 && game.getChapter() < 20) {
+                                game.getCurrentPlayer().addStars(starMultiple * 2);
+                            } else if (game.getChapter() > 20) {
+                                game.getCurrentPlayer().addStars(starMultiple * 4);
+                            }
+                            endTurn();
+                        }
+                    }
+
+                    if (game.getTurnStage() == GameConstants.TURNSTAGE_DROPROLL) {
+                        rollDrop.checkCollision(mouseX, mouseY);
+
+                        if (rollFrameCounter != 0) {
+                            if (rollDrop.isHidden()) rollDrop.toggleHide();
+                            rollDrop.draw(g2);
+                            if (rollDrop.isRolled())
+                                rollFrameCounter--;
+                        } else {
+                            rollDrop.toggleHide();
+                            starMultiple = rollDrop.getRoll();
+
+                            if (game.getChapter() < 5) {
+                                game.getCurrentPlayer().remStars(starMultiple);
+                            } else if (game.getChapter() > 5 && game.getChapter() < 20) {
+                                game.getCurrentPlayer().remStars(starMultiple * 2);
+                            } else if (game.getChapter() > 20) {
+                                game.getCurrentPlayer().remStars(starMultiple * 4);
+                            }
+                            endTurn();
+                        }
+                    }
+
+                    if (game.getTurnStage() == GameConstants.TURNSTAGE_BATTLE) {
+                        battleButton.checkCollision(mouseX, mouseY);
+                        battleButton.draw(g2);
+                        if (battleButton.isHidden()) {
+                            endTurn();
                         }
                     }
 
@@ -488,14 +569,31 @@ public class Panel extends JPanel {
                 }
                 Font oldFont = g2.getFont();
                 g2.setFont(new Font(g2.getFont().getFontName(), g2.getFont().getStyle(), 25));
-                g2.drawString("Clicked twoway loc: " + clickedTwoWayTileLocation, 20, getHeight()/2);
-                g2.drawString("current player loc: " + game.getCurrentPlayer().getBoardLoc().toString(), 20, getHeight()/2 + 20);
+                g2.drawString("Clicked twoway loc: " + clickedTwoWayTileLocation, 20, getHeight() / 2);
+                g2.drawString("current player loc: " + game.getCurrentPlayer().getBoardLoc().toString(), 20, getHeight() / 2 + 20);
                 g2.setFont(oldFont);
 
             }
 
 
         }
+    }
+
+    public void endTurn() {
+        game.setTurnStage(GameConstants.TURNSTAGE_MOVEROLL);
+        rollDice.reset();
+        rollStar.reset();
+        rollDrop.reset();
+
+        System.out.println(clickedTwoWayTileLocation);
+        System.out.println("Game loc: " + game.getCurrentPlayer().getBoardLoc());
+        if (clickedTwoWayTileLocation != null) {
+            if (clickedTwoWayTileLocation.X() != game.getCurrentPlayer().getBoardLoc().X() && clickedTwoWayTileLocation.Y() != game.getCurrentPlayer().getBoardLoc().Y()) {
+                directionPopup.reset();
+            }
+
+        }
+        rollFrameCounter = 64;
     }
 
     private void drawAvailableFonts(Graphics2D g2) {
@@ -533,6 +631,9 @@ public class Panel extends JPanel {
         directionPopup = new Popup("Which direction?", "null", "null", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3);
         testRoll = new Button("Test Roll", getWidth() / 2 + 10, getHeight() / 2 + 175, 250, 100, 4);
         rollDice = new Dice("Roll die!", "Roll", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3);
+        rollStar = new Dice("Roll for stars!", "Roll", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3);
+        rollDrop = new Dice("Roll for drop!", "Roll", getWidth() / 3, getHeight() / 3, getWidth() / 3, getHeight() / 3);
+        battleButton = new Button("Yes", getWidth() / 2 - 125, getHeight() / 2 - 125, 250, 100, 4);
         loadList.add(true);
         return true;
     }

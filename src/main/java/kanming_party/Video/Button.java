@@ -7,6 +7,8 @@ class Button extends Drawable {
     private String string;
     private int x, y, width, height, scale;
 
+    private boolean hidden;
+
     private boolean isMouseColliding;
 
     Button(String string, int x, int y, int width, int height, int scale) {
@@ -16,6 +18,7 @@ class Button extends Drawable {
         this.width = width;
         this.height = height;
         this.scale = scale;
+        hidden = false;
     }
 
     public void setText(String string){
@@ -24,26 +27,28 @@ class Button extends Drawable {
 
     @Override
     public void draw(Graphics2D g2) {
-        g2.setColor(Color.BLACK);
-        if (isMouseColliding) g2.setColor((new Color(210, 170, 19)));
+        if (!hidden) {
+            g2.setColor(Color.BLACK);
+            if (isMouseColliding) g2.setColor((new Color(210, 170, 19)));
 
 
-        g2.drawRoundRect(x, y, width, height, scale * 10, scale * 10);
+            g2.drawRoundRect(x, y, width, height, scale * 10, scale * 10);
 
-        //below is quick maths for centering string in a rectangle
-        g2.setFont(new Font(g2.getFont().getFontName(), g2.getFont().getStyle(), scale * 10));
-        FontMetrics metrics = g2.getFontMetrics(g2.getFont());
-        int x = this.x + (width - metrics.stringWidth(string)) / 2;
-        int y = this.y + ((height - metrics.getHeight()) / 2) + metrics.getAscent();
-        g2.drawString(string, x, y);
+            //below is quick maths for centering string in a rectangle
+            g2.setFont(new Font(g2.getFont().getFontName(), g2.getFont().getStyle(), scale * 10));
+            FontMetrics metrics = g2.getFontMetrics(g2.getFont());
+            int x = this.x + (width - metrics.stringWidth(string)) / 2;
+            int y = this.y + ((height - metrics.getHeight()) / 2) + metrics.getAscent();
+            g2.drawString(string, x, y);
 
-        g2.setColor(Color.BLACK);
+            g2.setColor(Color.BLACK);
+        }
 
     }
 
     boolean checkCollision(int mouseX, int mouseY) {
         isMouseColliding = super.checkCollision(mouseX, mouseY, x, y, width, height);
-        return isMouseColliding;
+        return isMouseColliding && !hidden;
     }
 
     public int getX() {
@@ -60,6 +65,14 @@ class Button extends Drawable {
 
     public int getHeight() {
         return height;
+    }
+
+    public void toggleHide(){
+        hidden = !hidden;
+    }
+
+    public boolean isHidden(){
+        return hidden;
     }
 
     public String getText(){

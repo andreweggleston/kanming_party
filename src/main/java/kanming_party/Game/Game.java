@@ -22,6 +22,10 @@ public class Game {
     private int turnStage;
     private int direction;
 
+    public int getChapter() {
+        return chapter;
+    }
+
     private Tile[][] gameBoard = new Tile[10][10];
 
 
